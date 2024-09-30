@@ -14,21 +14,18 @@ const Sidebar = () => {
   const [openFinance, setOpenFinance] = useState(false);
   const [openInventory, setOpenInventory] = useState(false);
   const [openFiscal, setOpenFiscal] = useState(false);
+  const [openCadastro, setOpenCadastro] = useState(false);
   
   // Gerenciador de submenu
   const toggleMenu = (menu) => {
     if (menu === 'finance') {
       setOpenFinance(!openFinance);
-      setOpenInventory(false); // Fecha outros menus
-      setOpenFiscal(false);
     } else if (menu === 'inventory') {
       setOpenInventory(!openInventory);
-      setOpenFinance(false);
-      setOpenFiscal(false);
     } else if (menu === 'fiscal') {
       setOpenFiscal(!openFiscal);
-      setOpenFinance(false);
-      setOpenInventory(false);
+    } else if (menu === 'cadastro') {
+      setOpenCadastro(!openCadastro);
     }
   };
 
@@ -43,7 +40,7 @@ const Sidebar = () => {
             <li>
               <Link
                 to="/dashboard"
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition-all duration-200"
               >
                 <AiOutlineDashboard size={'16px'} className='mr-2' />
                 Dashboard
@@ -51,7 +48,36 @@ const Sidebar = () => {
             </li>
             <li>
               <div
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer rounded transition-all duration-200"
+                onClick={() => toggleMenu('cadastro')}
+                aria-expanded={openCadastro}
+              >
+                <FaRegMoneyBillAlt size={'16px'} className='mr-2' />
+                Cadastro
+                {openCadastro ? <IoIosArrowDown className="ml-auto" /> : <IoIosArrowForward className="ml-auto" />}
+              </div>
+              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openCadastro ? 'max-h-40' : 'max-h-0'}`}>
+                <li>
+                  <Link
+                    to="/cadastro/fornecedor"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Cadastro de fornecedor
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/cadastro/produto"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Cadastro de produto
+                  </Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <div
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer rounded transition-all duration-200"
                 onClick={() => toggleMenu('finance')}
                 aria-expanded={openFinance}
               >
@@ -59,30 +85,28 @@ const Sidebar = () => {
                 Financeiro
                 {openFinance ? <IoIosArrowDown className="ml-auto" /> : <IoIosArrowForward className="ml-auto" />}
               </div>
-              {openFinance && (
-                <ul className="pl-6 transition-all duration-200">
-                  <li>
-                    <Link
-                      to="/finance/receipts"
-                      className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700"
-                    >
-                      Recibos
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/finance/budgets"
-                      className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700"
-                    >
-                      Orçamentos
-                    </Link>
-                  </li>
-                </ul>
-              )}
+              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openFinance ? 'max-h-40' : 'max-h-0'}`}>
+                <li>
+                  <Link
+                    to="/financeiro/pagamento"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Contas a pagar
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/financeiro/orcamento"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Orçamentos
+                  </Link>
+                </li>
+              </ul>
             </li>
             <li>
               <div
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer rounded transition-all duration-200"
                 onClick={() => toggleMenu('inventory')}
                 aria-expanded={openInventory}
               >
@@ -90,30 +114,36 @@ const Sidebar = () => {
                 Estoque
                 {openInventory ? <IoIosArrowDown className="ml-auto" /> : <IoIosArrowForward className="ml-auto" />}
               </div>
-              {openInventory && (
-                <ul className="pl-6 transition-all duration-200">
-                  <li>
-                    <Link
-                      to="/inventory/products"
-                      className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700"
-                    >
-                      Produtos
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/inventory/suppliers"
-                      className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700"
-                    >
-                      Fornecedores
-                    </Link>
-                  </li>
-                </ul>
-              )}
+              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openInventory ? 'max-h-40' : 'max-h-0'}`}>
+                <li>
+                  <Link
+                    to="/estoque/local"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Estoque por local
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/estoque/produtos"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Produtos
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/estoque/fornecedores"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Fornecedores
+                  </Link>
+                </li>
+              </ul>
             </li>
             <li>
               <div
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer rounded transition-all duration-200"
                 onClick={() => toggleMenu('fiscal')}
                 aria-expanded={openFiscal}
               >
@@ -121,40 +151,38 @@ const Sidebar = () => {
                 Fiscal
                 {openFiscal ? <IoIosArrowDown className="ml-auto" /> : <IoIosArrowForward className="ml-auto" />}
               </div>
-              {openFiscal && (
-                <ul className="pl-6 transition-all duration-200">
-                  <li>
-                    <Link
-                      to="/fiscal/taxes"
-                      className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700"
-                    >
-                      Impostos
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      to="/fiscal/reports"
-                      className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700"
-                    >
-                      Relatórios Fiscais
-                    </Link>
-                  </li>
-                </ul>
-              )}
+              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openFiscal ? 'max-h-40' : 'max-h-0'}`}>
+                <li>
+                  <Link
+                    to="/fiscal/entrada"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Entrada de Nota Fiscal
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/fiscal/relatorio"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                  >
+                    Relatórios Fiscais
+                  </Link>
+                </li>
+              </ul>
             </li>
           </ul>
         </nav>
         <div className="p-4 border-t border-gray-800">
           <Link
-            to="/users"
-            className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700"
+            to="/perfil"
+            className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition-all duration-200"
           >
             <FaUserCog size={'16px'} className='mr-2' />
             Usuários
           </Link>
           <Link
             to="/logout"
-            className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700"
+            className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition-all duration-200"
           >
             <FaArrowRightFromBracket size={'16px'} className='mr-2' />
             Sair
