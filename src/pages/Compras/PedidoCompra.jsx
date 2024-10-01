@@ -32,9 +32,9 @@ function PedidoCompra() {
                 <div className="mt-6">
                     <h2 className="text-xl text-gray-300 mb-4">Pedidos Recentes</h2>
                     <div className="overflow-x-auto">
-                        <table className="min-w-full bg-gray-300 rounded-lg">
+                        <table className="min-w-full text-left text-sm text-gray-400">
                             <thead>
-                                <tr className="w-full bg-gray-800 text-slate-200 uppercase text-sm leading-normal">
+                                <tr className="bg-gray-700">
                                     <th className="py-3 px-6 text-left">ID</th>
                                     <th className="py-3 px-6 text-left">Data</th>
                                     <th className="py-3 px-6 text-left">Unidade</th>
@@ -43,10 +43,10 @@ function PedidoCompra() {
                                     <th className="py-3 px-6 text-left">Ações</th>
                                 </tr>
                             </thead>
-                            <tbody className="bg-gray-700 text-slate-300 text-sm font-light">
+                            <tbody className="text-slate-300 text-sm font-light">
                                 {/* Renderizar os pedidos aqui */}
                                 {itensPedido.map((item, index) => (
-                                    <tr key={index} className="border-b border-gray-600 hover:bg-gray-600">
+                                    <tr key={index} className="border-b border-gray-600 hover:bg-gray-700">
                                         <td className="py-3 px-6 text-left whitespace-nowrap">{index + 1}</td>
                                         <td className="py-3 px-6 text-left">{new Date().toLocaleDateString()}</td>
                                         <td className="py-3 px-6 text-left">{item.unidade}</td>

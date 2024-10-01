@@ -31,42 +31,42 @@ function ModalServico({ onClose, servicosOrdem, setServicosOrdem }) {
     };
 
     return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-8 rounded-lg w-full max-w-lg">
-                <h2 className="text-2xl text-gray-800 mb-4">Adicionar Serviço</h2>
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-80 flex justify-center items-center">
+            <div className="bg-gray-700 text-slate-300 p-8 rounded-lg w-full max-w-3xl">
+                <h2 className="text-2xl text-slate-300 mb-4">Adicionar Serviço</h2>
                 <form>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-gray-600">Código do Serviço</label>
+                            <label className="block text-slate-300">Código do Serviço</label>
                             <input
                                 type="text"
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={codigoServico}
                                 onChange={(e) => setCodigoServico(e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-600">Descrição</label>
+                            <label className="block text-slate-300">Descrição</label>
                             <input
                                 type="text"
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={descricao}
                                 onChange={(e) => setDescricao(e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-600">Quantidade</label>
+                            <label className="block text-slate-300">Quantidade</label>
                             <input
                                 type="number"
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={quantidade}
                                 onChange={(e) => setQuantidade(e.target.value)}
                             />
                         </div>
                         <div>
-                            <label className="block text-gray-600">Tipo de Quantidade</label>
+                            <label className="block text-slate-300">Tipo de Quantidade</label>
                             <select
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={tipoQuantidade}
                                 onChange={(e) => setTipoQuantidade(e.target.value)}
                             >
@@ -75,10 +75,10 @@ function ModalServico({ onClose, servicosOrdem, setServicosOrdem }) {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-gray-600">Valor Unitário</label>
+                            <label className="block text-slate-300">Valor Unitário</label>
                             <input
                                 type="number"
-                                className="w-full p-2 border rounded"
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={valorUnitario}
                                 onChange={(e) => setValorUnitario(e.target.value)}
                             />
@@ -106,7 +106,7 @@ function ModalServico({ onClose, servicosOrdem, setServicosOrdem }) {
                 {/* Mini tabela de serviços já adicionados */}
                 <div className="mt-6">
                     <h3 className="text-xl mb-2">Serviços Adicionados</h3>
-                    <table className="min-w-full bg-white border rounded">
+                    <table className="min-w-full bg-gray-700 border rounded text-slate-300">
                         <thead>
                             <tr className="border-b">
                                 <th className="py-2 px-4 text-left">Código</th>

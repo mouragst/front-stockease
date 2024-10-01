@@ -302,9 +302,10 @@ function CadastroFornecedor() {
                     </div>
 
                     {/* Lista de fornecedores */}
-                    <table className="table-auto min-w-full bg-gray-800 rounded-xl">
+                    <h2 className="text-xl text-slate-300 mb-4">Cadastro de fornecedor</h2>
+                    <table className="min-w-full text-left text-sm text-gray-400">
                         <thead>
-                            <tr className="text-left text-slate-300 bg-gray-700">
+                            <tr className="bg-gray-700">
                                 <th className="p-2">Código</th>
                                 <th className="p-2">Pessoa</th>
                                 <th className="p-2">Razão Social</th>
@@ -315,9 +316,9 @@ function CadastroFornecedor() {
                                 <th className="p-2 text-center">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="bg-gray-900 text-slate-300 text-sm font-light">
                             {fornecedoresParaExibir.map(fornecedor => (
-                                <tr key={fornecedor.codigo} className="text-slate-200 border-b border-gray-700">
+                                <tr key={fornecedor.codigo} className="border-b border-gray-700 hover:bg-gray-700">
                                     <td className="p-2">{fornecedor.codigo}</td>
                                     <td className="p-2">{fornecedor.tipoPessoa}</td>
                                     <td className="p-2 font">{fornecedor.razaoSocial}</td>
