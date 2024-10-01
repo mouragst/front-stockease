@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -15,7 +15,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 2,
@@ -37,7 +37,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 4,
@@ -59,7 +59,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 6,
@@ -81,7 +81,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 8,
@@ -103,7 +103,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 10,
@@ -125,7 +125,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 12,
@@ -147,7 +147,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 14,
@@ -169,7 +169,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 16,
@@ -191,7 +191,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 18,
@@ -213,7 +213,7 @@ function CadastroFornecedor() {
             inscricaoEstadual: '987654321',
             categoria: 'Tecnologia',
             familiaProdutos: ['Computadores', 'Servidores', 'Periféricos'],
-            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Desenvolvimento de Software'],
+            familiaServicos: ['Suporte Técnico', 'Consultoria de TI', 'Dev'],
         },
         {
             codigo: 20,
@@ -234,7 +234,7 @@ function CadastroFornecedor() {
     
     // Paginação
     const [paginaAtual, setPaginaAtual] = useState(1);
-    const itensPorPagina = 17; // Defina quantos itens por página você deseja
+    const itensPorPagina = 14; // Defina quantos itens por página você deseja
     const totalItens = fornecedores.filter(fornecedor =>
         fornecedor.razaoSocial.toLowerCase().includes(busca.toLowerCase())
     ).length;
@@ -294,7 +294,7 @@ function CadastroFornecedor() {
                         <Button.Root
                             onClick={abrirModal}
                             variant='soft'
-                            intent='warning'
+                            intent='info'
                             size='lg'
                         >
                             <Button.Label>Novo Fornecedor</Button.Label>
@@ -302,7 +302,7 @@ function CadastroFornecedor() {
                     </div>
 
                     {/* Lista de fornecedores */}
-                    <table className="min-w-full bg-gray-800 rounded rounded-lg">
+                    <table className="table-auto min-w-full bg-gray-800 rounded-xl">
                         <thead>
                             <tr className="text-left text-slate-300 bg-gray-700">
                                 <th className="p-2">Código</th>
@@ -312,6 +312,7 @@ function CadastroFornecedor() {
                                 <th className="p-2">Categoria</th>
                                 <th className="p-2">Família de Produtos</th>
                                 <th className="p-2">Família de Serviços</th>
+                                <th className="p-2 text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -319,11 +320,27 @@ function CadastroFornecedor() {
                                 <tr key={fornecedor.codigo} className="text-slate-200 border-b border-gray-700">
                                     <td className="p-2">{fornecedor.codigo}</td>
                                     <td className="p-2">{fornecedor.tipoPessoa}</td>
-                                    <td className="p-2">{fornecedor.razaoSocial}</td>
+                                    <td className="p-2 font">{fornecedor.razaoSocial}</td>
                                     <td className="p-2">{fornecedor.cnpj || fornecedor.cpf}</td>
                                     <td className="p-2">{fornecedor.categoria}</td>
                                     <td className="p-2">{fornecedor.familiaProdutos.join(', ')}</td>
                                     <td className="p-2">{fornecedor.familiaServicos.join(', ')}</td>
+                                    <td className="p-2 text-center">
+                                        <div className="flex justify-center space-x-2">
+                                            <Button.Root
+                                             className="py-1 px-2"
+                                             variant='soft'
+                                             intent='warning'>
+                                                <Button.Label>Editar</Button.Label>
+                                            </Button.Root>
+                                            <Button.Root
+                                             className="py-1 px-2"
+                                             variant='ghost'
+                                             intent='danger'>
+                                                <Button.Label>Apagar</Button.Label>
+                                            </Button.Root>
+                                        </div>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
@@ -343,19 +360,39 @@ function CadastroFornecedor() {
                     {/* Modal de cadastro de fornecedor */}
                     {modalVisible && (
                         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-1/2"> {/* Aumenta a largura e adiciona sombra */}
+                            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-1/2">
                                 <h2 className="text-xl font-bold mb-6 text-slate-300">Cadastrar Fornecedor</h2>
+                                
                                 {/* Campos para cadastro */}
-                                <div className="grid grid-cols-2 gap-6 mb-6"> {/* Aumenta o espaço entre os campos */}
-                                    <Input label="Razão Social" placeholder="Digite a razão social" />
-                                    <Input label="CNPJ/CPF" placeholder="Digite o CNPJ ou CPF" />
+                                <div className="grid grid-cols-2 gap-6 mb-6">
+                                    <Input label="Razão Social" placeholder="Digite a razão social" className="col-span-2" />
+                                    <Input label="CNPJ/CPF" placeholder="Digite o CNPJ ou CPF" className="col-span-2" />
+
+                                    <Input label="Endereço" placeholder="Digite o endereço" className="col-span-2" />
+                                    <Input label="Cidade" placeholder="Digite a cidade" />
+
+                                    {/* Campos pequenos alinhados lado a lado */}
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <Input label="CEP" placeholder="Digite o CEP" className="w-full" />
+                                        <Input label="UF" placeholder="Digite o UF" className="w-full" />
+                                        <Input label="Telefone" placeholder="Digite o telefone" className="w-full" />
+                                    </div>
+
+                                    <Input label="Email" placeholder="Digite o email" className="col-span-2" />
+                                    <Input label="Contato" placeholder="Digite o contato" className="col-span-2" />
+
                                     <Input label="Inscrição Municipal" placeholder="Digite a inscrição municipal" />
                                     <Input label="Inscrição Estadual" placeholder="Digite a inscrição estadual" />
-                                    <Input label="Categoria" placeholder="Digite a categoria" />
-                                    <Input label="Família de Produtos" placeholder="Digite a família de produtos" />
-                                    <Input label="Família de Serviços" placeholder="Digite a família de serviços" />
+
+                                    {/* Mais campos pequenos alinhados */}
+                                    <div className="grid grid-cols-3 gap-4">
+                                        <Input label="Categoria" placeholder="Digite a categoria" className="w-full" />
+                                        <Input label="Família de Produtos" placeholder="Digite a família de produtos" className="w-full" />
+                                        <Input label="Família de Serviços" placeholder="Digite a família de serviços" className="w-full" />
+                                    </div>
                                 </div>
 
+                                {/* Botões de ação */}
                                 <div className="flex justify-end mt-6">
                                     <Button.Root onClick={fecharModal} 
                                     variant='ghost'
@@ -373,6 +410,7 @@ function CadastroFornecedor() {
                             </div>
                         </div>
                     )}
+
                 </div>
             </Sidebar>
         </>

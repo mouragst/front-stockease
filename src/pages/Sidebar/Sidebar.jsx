@@ -9,12 +9,15 @@ import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { BsBoxSeam } from "react-icons/bs";
 import { GrDocumentNotes } from "react-icons/gr";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
+import { AiOutlineProduct } from "react-icons/ai";
+import { BsCartPlus } from "react-icons/bs";
 
 const Sidebar = ({ children }) => {
   const [openFinance, setOpenFinance] = useState(false);
   const [openInventory, setOpenInventory] = useState(false);
   const [openFiscal, setOpenFiscal] = useState(false);
   const [openCadastro, setOpenCadastro] = useState(false);
+  const [openCompras, setOpenCompras] = useState(false);
 
   // Gerenciador de submenu
   const toggleMenu = (menu) => {
@@ -26,6 +29,8 @@ const Sidebar = ({ children }) => {
       setOpenFiscal(!openFiscal);
     } else if (menu === 'cadastro') {
       setOpenCadastro(!openCadastro);
+    } else if (menu === 'compras') {
+      setOpenCompras(!openCompras)
     }
   };
 
@@ -52,7 +57,7 @@ const Sidebar = ({ children }) => {
                 onClick={() => toggleMenu('cadastro')}
                 aria-expanded={openCadastro}
               >
-                <FaRegMoneyBillAlt size={'16px'} className='mr-2' />
+                <AiOutlineProduct size={'16px'} className='mr-2' />
                 Cadastro
                 {openCadastro ? <IoIosArrowDown className="ml-auto" /> : <IoIosArrowForward className="ml-auto" />}
               </div>
@@ -71,6 +76,43 @@ const Sidebar = ({ children }) => {
                     className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Cadastro de produto
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/cadastro/unidades"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
+                  >
+                    Cadastro de unidades
+                  </Link>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <div
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 cursor-pointer rounded-lg transition-all duration-200 mx-5"
+                onClick={() => toggleMenu('compras')}
+                aria-expanded={openCompras}
+              >
+                <BsCartPlus size={'16px'} className='mr-2' />
+                Compras
+                {openCompras ? <IoIosArrowDown className="ml-auto" /> : <IoIosArrowForward className="ml-auto" />}
+              </div>
+              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openCompras ? 'max-h-40' : 'max-h-0'}`}>
+                <li>
+                  <Link
+                    to="/compras/itens"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
+                  >
+                    Pedidos de compra
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/compras/servicos"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
+                  >
+                    Ordens de serviço
                   </Link>
                 </li>
               </ul>
@@ -178,7 +220,7 @@ const Sidebar = ({ children }) => {
             className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-2"
           >
             <FaUserCog size={'16px'} className='mr-2' />
-            Usuários
+            Usuário
           </Link>
           <Link
             to="/logout"
