@@ -10,12 +10,12 @@ import { BsBoxSeam } from "react-icons/bs";
 import { GrDocumentNotes } from "react-icons/gr";
 import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 
-const Sidebar = () => {
+const Sidebar = ({ children }) => {
   const [openFinance, setOpenFinance] = useState(false);
   const [openInventory, setOpenInventory] = useState(false);
   const [openFiscal, setOpenFiscal] = useState(false);
   const [openCadastro, setOpenCadastro] = useState(false);
-  
+
   // Gerenciador de submenu
   const toggleMenu = (menu) => {
     if (menu === 'finance') {
@@ -30,17 +30,17 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-900">
-      <div className="w-64 bg-gray-950 shadow-lg flex flex-col">
+    <div className="flex h-screen bg-gray-950">
+      <div className="w-72 bg-gray-950 shadow-lg flex flex-col"> 
         <div className="p-4 border-b border-gray-800">
-          <h1 className="text-2xl font-bold text-white justify-content-center">StockEase</h1>
+          <h1 className="text-2xl font-bold text-gray-300 text-center">StockEase</h1>
         </div>
         <nav className="mt-2 flex-grow">
           <ul>
             <li>
               <Link
                 to="/dashboard"
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition-all duration-200"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"  // Adicionei mx-2 para espaçamento lateral
               >
                 <AiOutlineDashboard size={'16px'} className='mr-2' />
                 Dashboard
@@ -48,7 +48,7 @@ const Sidebar = () => {
             </li>
             <li>
               <div
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer rounded transition-all duration-200"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 cursor-pointer rounded-lg transition-all duration-200 mx-5"
                 onClick={() => toggleMenu('cadastro')}
                 aria-expanded={openCadastro}
               >
@@ -60,7 +60,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/cadastro/fornecedor"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Cadastro de fornecedor
                   </Link>
@@ -68,7 +68,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/cadastro/produto"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Cadastro de produto
                   </Link>
@@ -77,7 +77,7 @@ const Sidebar = () => {
             </li>
             <li>
               <div
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer rounded transition-all duration-200"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 cursor-pointer rounded-lg transition-all duration-200 mx-5"
                 onClick={() => toggleMenu('finance')}
                 aria-expanded={openFinance}
               >
@@ -89,7 +89,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/financeiro/pagamento"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Contas a pagar
                   </Link>
@@ -97,7 +97,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/financeiro/orcamento"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Orçamentos
                   </Link>
@@ -106,7 +106,7 @@ const Sidebar = () => {
             </li>
             <li>
               <div
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer rounded transition-all duration-200"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 cursor-pointer rounded-lg transition-all duration-200 mx-5"
                 onClick={() => toggleMenu('inventory')}
                 aria-expanded={openInventory}
               >
@@ -118,7 +118,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/estoque/local"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Estoque por local
                   </Link>
@@ -126,7 +126,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/estoque/produtos"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Produtos
                   </Link>
@@ -134,7 +134,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/estoque/fornecedores"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Fornecedores
                   </Link>
@@ -143,7 +143,7 @@ const Sidebar = () => {
             </li>
             <li>
               <div
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 cursor-pointer rounded transition-all duration-200"
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 cursor-pointer rounded-lg transition-all duration-200 mx-5"
                 onClick={() => toggleMenu('fiscal')}
                 aria-expanded={openFiscal}
               >
@@ -155,7 +155,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/fiscal/entrada"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Entrada de Nota Fiscal
                   </Link>
@@ -163,7 +163,7 @@ const Sidebar = () => {
                 <li>
                   <Link
                     to="/fiscal/relatorio"
-                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-700 rounded transition-all duration-200"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
                   >
                     Relatórios Fiscais
                   </Link>
@@ -175,22 +175,22 @@ const Sidebar = () => {
         <div className="p-4 border-t border-gray-800">
           <Link
             to="/perfil"
-            className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition-all duration-200"
+            className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-2"
           >
             <FaUserCog size={'16px'} className='mr-2' />
             Usuários
           </Link>
           <Link
             to="/logout"
-            className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-700 rounded transition-all duration-200"
+            className="flex items-center py-2 px-4 text-gray-200 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-2"
           >
             <FaArrowRightFromBracket size={'16px'} className='mr-2' />
             Sair
           </Link>
         </div>
       </div>
-      <div className="flex-1 p-4 bg-dark-900 rounded border border-gray-800">
-        {/* Conteúdo principal do aplicativo */}
+      <div className="flex-1 p-4 bg-gray-900 rounded-lg border border-gray-800 mt-1">
+        {children}
       </div>
     </div>
   );
