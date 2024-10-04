@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Textarea from '../../components/Textarea';
+import apiUrl from '../../config';
 
 function ModalCadastroProduto({ onClose }) {
     const [codigo, setCodigo] = useState('');
@@ -15,9 +16,9 @@ function ModalCadastroProduto({ onClose }) {
     const [categoria, setCategoria] = useState('');
     const [familiaProdutos, setFamiliaProdutos] = useState('');
     const [familiaServicos, setFamiliaServicos] = useState('');
+    const [loading, setLoading] = useState(false); // Estado para controle de loading
 
-    const handleSave = () => {
-        // Função de salvar o produto
+    const handleSave = async () => {
         const novoProduto = {
             codigo,
             grupo,
@@ -31,9 +32,30 @@ function ModalCadastroProduto({ onClose }) {
             familiaProdutos,
             familiaServicos,
         };
-        console.log('Produto salvo:', novoProduto);
-        resetForm();
-        onClose();
+
+        setLoading(true); // Ativa o estado de loading
+
+        try {
+            const response = await fetch(`${apiUrl}/api/produtos`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(novoProduto),
+            });
+
+            if (response.ok) {
+                console.log('Produto cadastrado com sucesso');
+                resetForm();
+                onClose();
+            } else {
+                console.error('Erro ao cadastrar produto:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro de requisição:', error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     const resetForm = () => {
@@ -67,7 +89,7 @@ function ModalCadastroProduto({ onClose }) {
                         placeholder="Digite a descrição"
                     />
                     <Input
-                        label="Estoque Minimo"
+                        label="Estoque Mínimo"
                         value={estoqueMinimo}
                         onChange={(e) => setEstoqueMinimo(e.target.value)}
                         placeholder="Digite o estoque mínimo"
@@ -120,8 +142,12 @@ function ModalCadastroProduto({ onClose }) {
                     <Button.Root onClick={onClose} variant="ghost" intent="danger" className="border border-gray-600 mr-2">
                         <Button.Label>Cancelar</Button.Label>
                     </Button.Root>
-                    <Button.Root onClick={handleSave} variant="soft" intent="success" className="border border-gray-600">
-                        <Button.Label>Salvar</Button.Label>
+                    <Button.Root onClick={handleSave} variant="soft" intent="success" className="border border-gray-600" disabled={loading}>
+                        {loading ? (
+                            <span>Salvando...</span> // Exibe mensagem de loading
+                        ) : (
+                            <Button.Label>Salvar</Button.Label>
+                        )}
                     </Button.Root>
                 </div>
             </div>

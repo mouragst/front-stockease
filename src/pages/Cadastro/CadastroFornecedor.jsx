@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
+import ModalCadastroFornecedor from '../Modal/ModalCadastroFornecedor';
 
 function CadastroFornecedor() {
     // Lista de fornecedores fictícia
@@ -358,59 +359,9 @@ function CadastroFornecedor() {
                         </Button.Root>
                     </div>
 
-                    {/* Modal de cadastro de fornecedor */}
-                    {modalVisible && (
-                        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-1/2">
-                                <h2 className="text-xl font-bold mb-6 text-slate-300">Cadastrar Fornecedor</h2>
-                                
-                                {/* Campos para cadastro */}
-                                <div className="grid grid-cols-2 gap-6 mb-6">
-                                    <Input label="Razão Social" placeholder="Digite a razão social" className="col-span-2" />
-                                    <Input label="CNPJ/CPF" placeholder="Digite o CNPJ ou CPF" className="col-span-2" />
-
-                                    <Input label="Endereço" placeholder="Digite o endereço" className="col-span-2" />
-                                    <Input label="Cidade" placeholder="Digite a cidade" />
-
-                                    {/* Campos pequenos alinhados lado a lado */}
-                                    <div className="grid grid-cols-3 gap-4">
-                                        <Input label="CEP" placeholder="Digite o CEP" className="w-full" />
-                                        <Input label="UF" placeholder="Digite o UF" className="w-full" />
-                                        <Input label="Telefone" placeholder="Digite o telefone" className="w-full" />
-                                    </div>
-
-                                    <Input label="Email" placeholder="Digite o email" className="col-span-2" />
-                                    <Input label="Contato" placeholder="Digite o contato" className="col-span-2" />
-
-                                    <Input label="Inscrição Municipal" placeholder="Digite a inscrição municipal" />
-                                    <Input label="Inscrição Estadual" placeholder="Digite a inscrição estadual" />
-
-                                    {/* Mais campos pequenos alinhados */}
-                                    <div className="grid grid-cols-3 gap-4">
-                                        <Input label="Categoria" placeholder="Digite a categoria" className="w-full" />
-                                        <Input label="Família de Produtos" placeholder="Digite a família de produtos" className="w-full" />
-                                        <Input label="Família de Serviços" placeholder="Digite a família de serviços" className="w-full" />
-                                    </div>
-                                </div>
-
-                                {/* Botões de ação */}
-                                <div className="flex justify-end mt-6">
-                                    <Button.Root onClick={fecharModal} 
-                                    variant='ghost'
-                                    intent='danger'
-                                    className='border border-gray-600 mr-2'>
-                                        <Button.Label>Cancelar</Button.Label>
-                                    </Button.Root>
-                                    <Button.Root 
-                                    variant='soft'
-                                    intent='success'
-                                    className='border border-gray-600'>
-                                        <Button.Label>Salvar</Button.Label>
-                                    </Button.Root>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    {
+                        modalVisible && <ModalCadastroFornecedor onClose={fecharModal} />
+                    }
 
                 </div>
             </Sidebar>
