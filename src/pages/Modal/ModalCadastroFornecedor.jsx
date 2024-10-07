@@ -1,13 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
-import Textarea from '../../components/Textarea';
-import {apiUrl} from '../../config';
+import { apiUrl } from '../../config';
 
-function ModalCadastroFornecedor({ onClose }) {
+function ModalCadastroFornecedor({ onClose, fornecedor }) {
     const [codigo, setCodigo] = useState('');
     const [razaoSocial, setRazaoSocial] = useState('');
-    const [cnpjCpf, setCnpjCpf] = useState('');
+    const [cnpj, setCnpj] = useState('');
     const [inscricaoMunicipal, setInscricaoMunicipal] = useState('');
     const [inscricaoEstadual, setInscricaoEstadual] = useState('');
     const [endereco, setEndereco] = useState('');
@@ -20,15 +19,34 @@ function ModalCadastroFornecedor({ onClose }) {
     const [categoria, setCategoria] = useState('');
     const [familiaProdutos, setFamiliaProdutos] = useState('');
     const [familiaServicos, setFamiliaServicos] = useState('');
-
-    // Estado de carregamento
     const [loading, setLoading] = useState(false);
-    
+
+    // Carregar os dados do fornecedor no modal, se estiver editando
+    useEffect(() => {
+        if (fornecedor) {
+            setCodigo(fornecedor.codigo || '');
+            setRazaoSocial(fornecedor.razaoSocial || '');
+            setCnpj(fornecedor.cnpj || '');
+            setInscricaoMunicipal(fornecedor.inscricaoMunicipal || '');
+            setInscricaoEstadual(fornecedor.inscricaoEstadual || '');
+            setEndereco(fornecedor.endereco || '');
+            setCidade(fornecedor.cidade || '');
+            setCep(fornecedor.cep || '');
+            setUf(fornecedor.uf || '');
+            setTelefone(fornecedor.telefone || '');
+            setEmail(fornecedor.email || '');
+            setContato(fornecedor.contato || '');
+            setCategoria(fornecedor.categoria || '');
+            setFamiliaProdutos(fornecedor.familiaProdutos || '');
+            setFamiliaServicos(fornecedor.familiaServicos || '');
+        }
+    }, [fornecedor]);
+
     const handleSave = async () => {
-        const novoFornecedor = {
+        const fornecedorData = {
             codigo,
             razaoSocial,
-            cnpjCpf,
+            cnpj,
             inscricaoMunicipal,
             inscricaoEstadual,
             endereco,
@@ -44,34 +62,39 @@ function ModalCadastroFornecedor({ onClose }) {
         };
 
         setLoading(true);
-    
+
         try {
-            const response = await fetch(`${apiUrl}/fornecedores`, {
-                method: 'POST',
+            const method = fornecedor?.id ? 'PUT' : 'POST';
+            const url = fornecedor?.id 
+                ? `${apiUrl}/api/fornecedores/${fornecedor.id}` 
+                : `${apiUrl}/api/fornecedores`;
+
+            const response = await fetch(url, {
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(novoFornecedor),
+                body: JSON.stringify(fornecedorData),
             });
 
             if (response.ok) {
-                console.log('Fornecedor cadastrado com sucesso');
+                console.log(fornecedor?.id ? 'Fornecedor atualizado com sucesso' : 'Fornecedor cadastrado com sucesso');
                 resetForm();
-                onClose();
+                onClose(); // Fechar o modal após salvar/editar
             } else {
-                console.error('Erro ao cadastrar fornecedor');
-            } 
+                console.error('Erro ao salvar fornecedor');
+            }
         } catch (error) {
             console.error('Erro de requisição:', error);
         } finally {
-            setLoading(false); // Finalizar o loading
+            setLoading(false);
         }
     };
 
     const resetForm = () => {
         setCodigo('');
         setRazaoSocial('');
-        setCnpjCpf('');
+        setCnpj('');
         setInscricaoMunicipal('');
         setInscricaoEstadual('');
         setEndereco('');
@@ -89,11 +112,13 @@ function ModalCadastroFornecedor({ onClose }) {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-1/2">
-                <h2 className="text-xl font-bold mb-6 text-slate-300">Cadastrar Fornecedor</h2>
+                <h2 className="text-xl font-bold mb-6 text-slate-300">
+                    {fornecedor ? 'Editar Fornecedor' : 'Cadastrar Fornecedor'}
+                </h2>
 
                 <div className="grid grid-cols-2 gap-6 mb-6">
                     <Input label="Razão Social" value={razaoSocial} onChange={(e) => setRazaoSocial(e.target.value)} placeholder="Digite a razão social" />
-                    <Input label="CNPJ/CPF" value={cnpjCpf} onChange={(e) => setCnpjCpf(e.target.value)} placeholder="Digite o CNPJ ou CPF" />
+                    <Input label="CNPJ/CPF" value={cnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="Digite o CNPJ ou CPF" />
 
                     <Input label="Endereço" value={endereco} onChange={(e) => setEndereco(e.target.value)} placeholder="Digite o endereço" />
                     <Input label="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Digite a cidade" />
@@ -122,7 +147,7 @@ function ModalCadastroFornecedor({ onClose }) {
                         <Button.Label>Cancelar</Button.Label>
                     </Button.Root>
                     <Button.Root onClick={handleSave} variant='soft' intent='success' className='border border-gray-600' disabled={loading}>
-                        {loading ? 'Salvando...' : 'Salvar'} {/* Mostra loading ou o texto padrão */}
+                        {loading ? 'Salvando...' : 'Salvar'}
                     </Button.Root>
                 </div>
             </div>

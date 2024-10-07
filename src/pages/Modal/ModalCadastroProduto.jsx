@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import Textarea from '../../components/Textarea';
-import apiUrl from '../../config';
+import { apiUrl } from '../../config';
 
 function ModalCadastroProduto({ onClose }) {
     const [codigo, setCodigo] = useState('');
