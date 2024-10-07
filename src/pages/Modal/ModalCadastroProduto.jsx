@@ -10,7 +10,7 @@ function ModalCadastroProduto({ onClose }) {
     const [descricao, setDescricao] = useState('');
     const [estoqueMinimo, setEstoqueMinimo] = useState('');
     const [fornecedor, setFornecedor] = useState('');
-    const [cnpjCpf, setCnpjCpf] = useState('');
+    const [cnpj, setCnpj] = useState('');
     const [inscricaoMunicipal, setInscricaoMunicipal] = useState('');
     const [inscricaoEstadual, setInscricaoEstadual] = useState('');
     const [categoria, setCategoria] = useState('');
@@ -25,7 +25,7 @@ function ModalCadastroProduto({ onClose }) {
             descricao,
             estoqueMinimo,
             fornecedor,
-            cnpjCpf,
+            cnpj,
             inscricaoMunicipal,
             inscricaoEstadual,
             categoria,
@@ -94,13 +94,15 @@ function ModalCadastroProduto({ onClose }) {
                         onChange={(e) => setEstoqueMinimo(e.target.value)}
                         placeholder="Digite o estoque mínimo"
                     />
+                    <Input label="CNPJ/CPF" value={cnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="CNPJ ou CPF do fornecedor" />
                     <Input
                         label="Razão Social do Fornecedor"
                         value={fornecedor}
                         onChange={(e) => setFornecedor(e.target.value)}
                         placeholder="Digite a razão social do fornecedor"
+                        disabled
                     />
-                    <Input label="CNPJ/CPF" value={cnpjCpf} onChange={(e) => setCnpjCpf(e.target.value)} placeholder="CNPJ ou CPF do fornecedor" disabled />
+                
                     <Input
                         label="Inscrição Municipal"
                         value={inscricaoMunicipal}
