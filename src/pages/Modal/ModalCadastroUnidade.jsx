@@ -7,10 +7,14 @@ import { apiUrl } from '../../config';
 function ModalCadastroUnidade({ onClose }) {
     // Estados para armazenar os dados do formulário
     const [razaoSocial, setRazaoSocial] = useState('');
-    const [cnpjCpf, setCnpjCpf] = useState('');
+    const [cnpj, setCnpj] = useState('');
     const [inscricaoMunicipal, setInscricaoMunicipal] = useState('');
     const [inscricaoEstadual, setInscricaoEstadual] = useState('');
     const [matriz, setMatriz] = useState('');
+    const [cep, setCep] = useState('');
+    const [endereco, setEndereco] = useState('');
+    const [cidade, setCidade] = useState('');
+    const [uf, setUf] = useState('');
 
     // Estado de carregamento
     const [loading, setLoading] = useState(false);
@@ -18,23 +22,31 @@ function ModalCadastroUnidade({ onClose }) {
     // Função para limpar os campos após salvar ou cancelar
     const limparCampos = () => {
         setRazaoSocial('');
-        setCnpjCpf('');
+        setCnpj('');
         setInscricaoMunicipal('');
         setInscricaoEstadual('');
         setMatriz('');
+        setCep('');
+        setEndereco('');
+        setCidade('');
+        setUf('');
     };
-
-    // Função para salvar os dados na API
+    
     const handleSave = async () => {
         const novaUnidade = {
             razao_social: razaoSocial,
-            cnpj_cpf: cnpjCpf,
+            cnpj: cnpj,
             inscricao_municipal: inscricaoMunicipal,
             inscricao_estadual: inscricaoEstadual,
             matriz: matriz,
+            cep: cep,
+            endereco: endereco,
+            cidade: cidade,
+            uf: uf,
+            ativo: true,
         };
 
-        setLoading(true); // Iniciar o loading
+        setLoading(true);
         try {
             const response = await fetch(`${apiUrl}/api/unidades`, {
                 method: 'POST',
@@ -46,15 +58,15 @@ function ModalCadastroUnidade({ onClose }) {
 
             if (response.ok) {
                 console.log('Unidade cadastrada com sucesso!');
-                limparCampos(); // Limpar os campos após sucesso
-                onClose(); // Fechar modal após sucesso
+                limparCampos();
+                onClose();
             } else {
                 console.error('Erro ao cadastrar unidade');
             }
         } catch (error) {
             console.error('Erro de requisição:', error);
         } finally {
-            setLoading(false); // Finalizar o loading
+            setLoading(false);
         }
     };
 
@@ -71,10 +83,10 @@ function ModalCadastroUnidade({ onClose }) {
                         onChange={(e) => setRazaoSocial(e.target.value)}
                     />
                     <Input
-                        label="CNPJ/CPF"
-                        placeholder="Digite o CNPJ ou CPF"
-                        value={cnpjCpf}
-                        onChange={(e) => setCnpjCpf(e.target.value)}
+                        label="CNPJ"
+                        placeholder="Digite o CNPJ"
+                        value={cnpj}
+                        onChange={(e) => setCnpj(e.target.value)}
                     />
                     <Input
                         label="Inscrição Municipal"
@@ -90,9 +102,33 @@ function ModalCadastroUnidade({ onClose }) {
                     />
                     <Input
                         label="Matriz"
-                        placeholder="Digite a categoria"
+                        placeholder="Digite o nome da matriz"
                         value={matriz}
                         onChange={(e) => setMatriz(e.target.value)}
+                    />
+                    <Input
+                        label="CEP"
+                        placeholder="Digite o CEP"
+                        value={cep}
+                        onChange={(e) => setCep(e.target.value)}
+                    />
+                    <Input
+                        label="Endereço"
+                        placeholder="Digite o endereço"
+                        value={endereco}
+                        onChange={(e) => setEndereco(e.target.value)}
+                    />
+                    <Input
+                        label="Cidade"
+                        placeholder="Digite a cidade"
+                        value={cidade}
+                        onChange={(e) => setCidade(e.target.value)}
+                    />
+                    <Input
+                        label="UF"
+                        placeholder="Digite o estado (UF)"
+                        value={uf}
+                        onChange={(e) => setUf(e.target.value)}
                     />
                 </div>
 
