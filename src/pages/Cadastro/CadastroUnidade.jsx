@@ -10,6 +10,9 @@ function CadastroUnidade() {
     const [busca, setBusca] = useState('');
     const [unidades, setUnidades] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [unidadeEditar, setUnidadeEditar] = useState(null);
+    const [unidadeApagar, setUnidadeApagar] = useState(null);
+    const [modalConfirmVisible, setModalConfirmVisible] = useState(false);
 
     // Função para abrir o modal de cadastro
     const abrirModal = () => {
@@ -19,6 +22,22 @@ function CadastroUnidade() {
     // Função para fechar o modal
     const fecharModal = () => {
         setModalVisible(false);
+        setUnidadeEditar(null);
+    };
+
+    const confirmarExclusao = (unidade) => {
+        setUnidadeApagar(unidade);
+        setModalConfirmVisible(true);
+    };
+
+    const editarProduto = (id) => {
+        const unidade = unidades.find((p) => p.id === id); // Encontra o produto na lista
+        if (unidade) {
+            setUnidadeEditar(unidade); // Define o produto a ser editado
+            setModalVisible(true); // Abre o modal de edição
+        } else {
+            console.error('Produto não encontrado');
+        }
     };
 
     // Função para buscar as unidades na API
@@ -43,6 +62,26 @@ function CadastroUnidade() {
     useEffect(() => {
         fetchUnidades();
     }, []);
+
+    const apagarUnidade = async () => {
+        try {
+            const response = await fetch(`${apiUrl}/api/unidades/${unidadeApagar.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ativo: false }), 
+            });
+            if (response.ok) {
+                setModalConfirmVisible(false); 
+                fetchUnidades();
+            } else {
+                console.error('Erro ao apagar unidade:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Erro de requisição:', error);
+        }
+    };
 
     // Filtrar as unidades com base na busca
     const unidadesFiltradas = unidades.filter(unidade =>
@@ -97,10 +136,18 @@ function CadastroUnidade() {
                                                 <td className="px-4 py-2">{unidade.cidade}</td>
                                                 <td className="px-4 py-2">{unidade.uf}</td>
                                                 <td className="px-4 py-2 flex space-x-2">
-                                                    <Button.Root variant="soft" intent="info">
+                                                <Button.Root
+                                                        onClick={() => editarProduto(unidade.id)}
+                                                        variant="soft"
+                                                        intent="info"   
+                                                    >
                                                         Editar
                                                     </Button.Root>
-                                                    <Button.Root variant="soft" intent="danger">
+                                                    <Button.Root
+                                                        onClick={() => confirmarExclusao(unidade)}
+                                                        variant="soft"
+                                                        intent="danger"
+                                                    >
                                                         Apagar
                                                     </Button.Root>
                                                 </td>
@@ -116,7 +163,26 @@ function CadastroUnidade() {
                         )}
                     </div>
 
-                    {modalVisible && <ModalCadastroUnidade onClose={fecharModal} />}
+                    {modalVisible && <ModalCadastroUnidade onClose={fecharModal} unidade={unidadeEditar} />}
+
+
+                    {/* Modal de Confirmação de Exclusão */}
+                    {modalConfirmVisible && (
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                            <div className="bg-gray-800 text-slate-300 rounded-lg shadow-lg p-6 max-w-md mx-auto">
+                                <h2 className="text-lg font-semibold mb-4">Confirmação de Exclusão</h2>
+                                <p className="mb-4">Tem certeza de que deseja apagar a unidade {unidadeApagar?.descricao}?</p>
+                                <div className="flex justify-between">
+                                    <Button.Root onClick={() => setModalConfirmVisible(false)} variant='soft' intent='secondary'>
+                                        Cancelar
+                                    </Button.Root>
+                                    <Button.Root onClick={apagarUnidade} variant='soft' intent='danger'>
+                                        Apagar
+                                    </Button.Root>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </Sidebar>
         </>

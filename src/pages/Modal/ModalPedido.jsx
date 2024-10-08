@@ -7,6 +7,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     const [estoqueAtual, setEstoqueAtual] = useState('');
     const [valorUnitario, setValorUnitario] = useState('');
     const [unidade, setUnidade] = useState('');
+    const [unidadeMatriz, setUnidadeMatriz] = useState('');
 
     // Função para adicionar item ao pedido
     const handleAddItem = () => {
@@ -40,10 +41,11 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                 <form>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-slate-300">Código do Produto</label>
+                            <label className="block text-slate-300">Código SKU</label>
                             <input
                                 type="text"
                                 className="w-full p-2 border rounded bg-gray-700 text-white"
+                                placeholder='Digite o código SKU do produto'
                                 value={codigoProduto}
                                 onChange={(e) => setCodigoProduto(e.target.value)}
                             />
@@ -52,9 +54,10 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             <label className="block text-slate-300">Descrição</label>
                             <input
                                 type="text"
-                                className="w-full p-2 border rounded bg-gray-700 text-white"
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={descricao}
                                 onChange={(e) => setDescricao(e.target.value)}
+                                disabled
                             />
                         </div>
                         <div>
@@ -62,26 +65,39 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             <input
                                 type="number"
                                 className="w-full p-2 border rounded bg-gray-700 text-white"
+                                placeholder='Digite a ser comprada'
                                 value={quantidade}
                                 onChange={(e) => setQuantidade(e.target.value)}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-slate-300">Unidade Matriz</label>
+                            <input
+                                type="text"
+                                className="w-full p-2 border rounded bg-gray-700 text-white"
+                                placeholder='Digite a unidade da matriz'
+                                value={unidadeMatriz}
+                                onChange={(e) => setUnidadeMatriz(e.target.value)}
                             />
                         </div>
                         <div>
                             <label className="block text-slate-300">Estoque Atual</label>
                             <input
                                 type="text"
-                                className="w-full p-2 border rounded bg-gray-700 text-white"
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={estoqueAtual}
                                 onChange={(e) => setEstoqueAtual(e.target.value)}
+                                disabled
                             />
                         </div>
                         <div>
                             <label className="block text-slate-300">Valor Unitário</label>
                             <input
                                 type="number"
-                                className="w-full p-2 border rounded bg-gray-700 text-white"
+                                className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={valorUnitario}
                                 onChange={(e) => setValorUnitario(e.target.value)}
+                                disabled
                             />
                         </div>
                     </div>

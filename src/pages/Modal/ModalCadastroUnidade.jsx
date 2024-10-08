@@ -1,10 +1,10 @@
 // ModalCadastroUnidade.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { apiUrl } from '../../config';
 
-function ModalCadastroUnidade({ onClose }) {
+function ModalCadastroUnidade({ onClose, unidade }) {
     // Estados para armazenar os dados do formulário
     const [razaoSocial, setRazaoSocial] = useState('');
     const [cnpj, setCnpj] = useState('');
@@ -31,13 +31,26 @@ function ModalCadastroUnidade({ onClose }) {
         setCidade('');
         setUf('');
     };
+    useEffect(() => {
+        if (unidade) {
+            setRazaoSocial(unidade.razaoSocial || '');
+            setCnpj(unidade.cnpj || '');
+            setInscricaoMunicipal(unidade.inscricaoMunicipal || '');
+            setInscricaoEstadual(unidade.inscricaoEstadual || '');
+            setMatriz(unidade.matriz || '');
+            setCep(unidade.cep || '');
+            setEndereco(unidade.endereco || '');
+            setCidade(unidade.cidade || '');
+            setUf(unidade.uf || '');
+        }
+    }, [unidade]);
     
     const handleSave = async () => {
         const novaUnidade = {
-            razao_social: razaoSocial,
+            razaoSocial: razaoSocial,
             cnpj: cnpj,
-            inscricao_municipal: inscricaoMunicipal,
-            inscricao_estadual: inscricaoEstadual,
+            inscricaoMunicipal: inscricaoMunicipal,
+            inscricaoEstadual: inscricaoEstadual,
             matriz: matriz,
             cep: cep,
             endereco: endereco,

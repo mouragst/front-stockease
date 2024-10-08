@@ -170,8 +170,8 @@ function CadastroProduto() {
 
                     {/* Modal de Confirmação de Exclusão */}
                     {modalConfirmVisible && (
-                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                            <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
+                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                            <div className="bg-gray-800 text-slate-300 rounded-lg shadow-lg p-6 max-w-md mx-auto">
                                 <h2 className="text-lg font-semibold mb-4">Confirmação de Exclusão</h2>
                                 <p className="mb-4">Tem certeza de que deseja apagar o produto {produtoApagar?.descricao}?</p>
                                 <div className="flex justify-between">
