@@ -5,7 +5,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     const [unidades, setUnidades] = useState([]);
     const [selectedUnidade, setSelectedUnidade] = useState('');
     const [codigoProduto, setCodigoProduto] = useState('');
-    const [idProduto, setIdProduto] = useState('');
     const [descricao, setDescricao] = useState('');
     const [quantidade, setQuantidade] = useState('');
     const [cnpjFornecedor, setCnpjFornecedor] = useState('');
@@ -15,7 +14,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     const [unidade, setUnidade] = useState('');
     const [isFieldsEnabled, setIsFieldsEnabled] = useState(false);
 
-    // Função para buscar as unidades na API
     useEffect(() => {
         fetch(`${apiUrl}/api/unidades`)
             .then((response) => response.json())
@@ -26,7 +24,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     }, []);
 
     const handleFetchProduto = () => {
-        if (codigoProduto) {
+        if (codigoProduto && selectedUnidade) {
             fetch(`${apiUrl}/api/produtos/${codigoProduto}`)
                 .then((response) => response.json())
                 .then((produto) => {
@@ -34,27 +32,28 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                     setRazaoSocialFornecedor(produto.razaoSocial);
                     setDescricao(produto.descricao);
                     setValorUnitario(produto.precoCompra);
-    
-                    if (selectedUnidade) {
-                        return fetch(`${apiUrl}/api/estoque/estoqueUnidade?produtoId=${produto.id}&unidadeId=${selectedUnidade}`, {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                        });
-                    }
+
+                    return fetch(`${apiUrl}/api/estoque/estoqueUnidade?produtoId=${produto.id}&unidadeId=${selectedUnidade}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
                 })
-                .then((response) => response && response.json())  // Verifica se o response é válido antes de chamar .json()
+                .then((response) => response.json())
                 .then((estoqueData) => {
-                    if (estoqueData) {
-                        setEstoqueAtual(estoqueData[0].estoqueAtual);
-                    }
+                    setEstoqueAtual(estoqueData[0]?.estoqueAtual <= 0 ? 'Sem estoque' : estoqueData[0]?.estoqueAtual);
                 })
                 .catch((error) => {
                     console.error('Erro ao buscar produto ou estoque da unidade:', error);
+                    setEstoqueAtual('Erro ao buscar estoque');
                 });
         }
     };
+
+    useEffect(() => {
+        handleFetchProduto();
+    }, [codigoProduto, selectedUnidade]);
 
     const handleAddItem = () => {
         const novoItem = {
@@ -67,25 +66,61 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
             valorTotal: parseFloat(quantidade) * parseFloat(valorUnitario),
         };
         setItensPedido([...itensPedido, novoItem]);
-        resetForm();
     };
 
-    // Função para resetar o formulário
-    const resetForm = () => {
-        setCodigoProduto('');
-        setDescricao('');
-        setQuantidade('');
-        setEstoqueAtual('');
-        setValorUnitario('');
-        setUnidade('');
-        setIsFieldsEnabled(false);
-    };
-
-    // Função para habilitar campos após a seleção de uma unidade
     const handleUnidadeChange = (e) => {
         setSelectedUnidade(e.target.value);
         setIsFieldsEnabled(true);
         setUnidade(e.target.value);
+    };
+
+    // Função para gerar um número de pedido (simulação, pode ser ajustado para lógica do backend)
+    const gerarNumeroPedido = () => {
+        return `PED-${new Date().getTime()}`;
+    };
+
+    // Função para finalizar o pedido e enviar os itens para a API
+    const handleFinalizarPedido = () => {
+        const numeroPedido = gerarNumeroPedido(); // Exemplo de geração de número de pedido
+
+        const pedidoData = {
+            id: numeroPedido, // Número do pedido
+            itens: itensPedido.map((item) => ({
+                codigo_sku: item.codigoProduto,
+                quantidade: item.quantidade,
+                valor_unitario: item.valorUnitario,
+                valor_total_produto: item.valorTotal,
+                cnpj_fornecedor: cnpjFornecedor,
+                razao_social_fornecedor: razaoSocialFornecedor,
+                cnpj_unidade: selectedUnidade,
+                unidade: item.unidade,
+                status: 'Pendente', // ou outro status desejado
+                created_at: new Date().toISOString(),
+            }))
+        };
+
+        fetch(`${apiUrl}/api/compras`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(pedidoData),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Erro ao salvar o pedido');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            console.log('Pedido salvo com sucesso:', data);
+            // Limpa os itens do pedido após o envio
+            setItensPedido([]);
+            onClose(); // Fecha o modal após finalizar o pedido
+        })
+        .catch((error) => {
+            console.error('Erro ao finalizar o pedido:', error);
+        });
     };
 
     return (
@@ -94,7 +129,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                 <h2 className="text-3xl mb-4">Adicionar Item ao Pedido</h2>
                 <form>
                     <div className="grid grid-cols-2 gap-4">
-                        {/* Select de Unidades */}
                         <div>
                             <label className="block text-slate-300">Unidade Matriz</label>
                             <select
@@ -111,7 +145,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             </select>
                         </div>
 
-                        {/* Código SKU */}
                         <div>
                             <label className="block text-slate-300">Código SKU</label>
                             <input
@@ -125,7 +158,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             />
                         </div>
 
-                        {/* Descrição */}
                         <div>
                             <label className="block text-slate-300">Descrição</label>
                             <input
@@ -136,7 +168,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             />
                         </div>
 
-                        {/* Quantidade */}
                         <div>
                             <label className="block text-slate-300">Quantidade</label>
                             <input
@@ -149,25 +180,23 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             />
                         </div>
 
-                        {/* CNPJ Fornecedor */}
                         <div>
                             <label className="block text-slate-300">CNPJ Fornecedor</label>
                             <input
                                 type="text"
                                 className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={cnpjFornecedor.length === 14 
-                                    ? `${cnpjFornecedor.slice(0,2)}.${cnpjFornecedor.slice(2,5)}.${cnpjFornecedor.slice(5,8)}/${cnpjFornecedor.slice(8,12)}-${cnpjFornecedor.slice(12)}` 
+                                    ? `${cnpjFornecedor.slice(0,2)}.${cnpjFornecedor.slice(2,5)}.${cnpjFornecedor.slice(5,8)}/${cnpjFornecedor.slice(8,12)}-${cnpjFornecedor.slice(12)}`
                                     : cnpjFornecedor.length > 0
-                                        ? `${cnpjFornecedor.slice(0,3)}.${cnpjFornecedor.slice(3,6)}.${cnpjFornecedor.slice(6,9)}-${cnpjFornecedor.slice(9)}`  
+                                        ? `${cnpjFornecedor.slice(0,3)}.${cnpjFornecedor.slice(3,6)}.${cnpjFornecedor.slice(6,9)}-${cnpjFornecedor.slice(9)}`
                                         : 'N/A'
                                 }
                                 disabled
                             />
                         </div>
 
-                        {/* Razao Social Fornecedor */}
                         <div>
-                            <label className="block text-slate-300">Razao Social Fornecedor</label>
+                            <label className="block text-slate-300">Razão Social Fornecedor</label>
                             <input
                                 type="text"
                                 className="w-full p-2 border rounded bg-gray-800 text-white"
@@ -176,7 +205,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             />
                         </div>
 
-                        {/* Estoque Atual */}
                         <div>
                             <label className="block text-slate-300">Estoque Atual</label>
                             <input
@@ -187,11 +215,10 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             />
                         </div>
 
-                        {/* Valor Unitário */}
                         <div>
                             <label className="block text-slate-300">Valor Unitário</label>
                             <input
-                                type="number"
+                                type="text"
                                 className="w-full p-2 border rounded bg-gray-800 text-white"
                                 value={valorUnitario}
                                 disabled
@@ -199,48 +226,64 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                         </div>
                     </div>
 
-                    <div className="flex justify-between mt-6">
+                    <div className="mt-4">
                         <button
                             type="button"
-                            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
                             onClick={handleAddItem}
-                            disabled={!codigoProduto || !quantidade}
                         >
-                            Adicionar
-                        </button>
-                        <button
-                            type="button"
-                            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-                            onClick={onClose}
-                        >
-                            Cancelar
+                            Adicionar Item
                         </button>
                     </div>
                 </form>
 
-                {/* Mini tabela de itens já adicionados */}
-                <div className="mt-6">
-                    <h3 className="text-xl mb-2">Itens Adicionados</h3>
-                    <table className="min-w-full bg-gray-800 border rounded">
-                        <thead>
-                            <tr className="border-b border-gray-700">
-                                <th className="py-2 px-4 text-left text-slate-300">Código</th>
-                                <th className="py-2 px-4 text-left text-slate-300">Descrição</th>
-                                <th className="py-2 px-4 text-left text-slate-300">Quantidade</th>
-                                <th className="py-2 px-4 text-left text-slate-300">Valor Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {itensPedido.map((item, index) => (
-                                <tr key={index} className="border-b border-gray-700">
-                                    <td className="py-2 px-4 text-slate-300">{item.codigoProduto}</td>
-                                    <td className="py-2 px-4 text-slate-300">{item.descricao}</td>
-                                    <td className="py-2 px-4 text-slate-300">{item.quantidade}</td>
-                                    <td className="py-2 px-4 text-slate-300">R$ {item.valorTotal}</td>
+                <h3 className="text-xl mt-8 mb-4">Itens do Pedido</h3>
+                {itensPedido.length > 0 ? (
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full bg-gray-800 border border-gray-700">
+                            <thead>
+                                <tr>
+                                    <th className="py-2 px-4 border-b border-gray-700 text-left">Código SKU</th>
+                                    <th className="py-2 px-4 border-b border-gray-700 text-left">Descrição</th>
+                                    <th className="py-2 px-4 border-b border-gray-700 text-left">Quantidade</th>
+                                    <th className="py-2 px-4 border-b border-gray-700 text-left">Unidade</th>
+                                    <th className="py-2 px-4 border-b border-gray-700 text-left">Estoque Atual</th>
+                                    <th className="py-2 px-4 border-b border-gray-700 text-left">Valor Unitário</th>
+                                    <th className="py-2 px-4 border-b border-gray-700 text-left">Valor Total</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {itensPedido.map((item, index) => (
+                                    <tr key={index} className="hover:bg-gray-700">
+                                        <td className="py-2 px-4 border-b border-gray-700">{item.codigoProduto}</td>
+                                        <td className="py-2 px-4 border-b border-gray-700">{item.descricao}</td>
+                                        <td className="py-2 px-4 border-b border-gray-700">{item.quantidade}</td>
+                                        <td className="py-2 px-4 border-b border-gray-700">{item.unidade}</td>
+                                        <td className="py-2 px-4 border-b border-gray-700">{item.estoqueAtual}</td>
+                                        <td className="py-2 px-4 border-b border-gray-700">{item.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                        <td className="py-2 px-4 border-b border-gray-700">{item.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                ) : (
+                    <p className="text-center mt-4">Nenhum item adicionado.</p>
+                )}
+
+                <div className="mt-8 flex justify-end">
+                    <button
+                        className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+                        onClick={handleFinalizarPedido}
+                    >
+                        Finalizar Pedido
+                    </button>
+                    <button
+                        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded ml-4"
+                        onClick={onClose}
+                    >
+                        Fechar
+                    </button>
                 </div>
             </div>
         </div>
