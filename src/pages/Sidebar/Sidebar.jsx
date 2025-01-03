@@ -38,14 +38,14 @@ const Sidebar = ({ children }) => {
     <div className="flex h-screen bg-gray-950">
       <div className="w-72 bg-gray-950 shadow-lg flex flex-col"> 
         <div className="p-4 border-b border-gray-800">
-          <h1 className="text-2xl font-bold text-gray-300 text-center">StockEase</h1>
+          <h1 className="text-2xl font-bold text-gray-300 text-center">KeepFone</h1>
         </div>
         <nav className="mt-2 flex-grow">
           <ul>
             <li>
               <Link
                 to="/dashboard"
-                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"  // Adicionei mx-2 para espaçamento lateral
+                className="flex items-center py-2 px-4 text-gray-300 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5" 
               >
                 <AiOutlineDashboard size={'16px'} className='mr-2' />
                 Dashboard
@@ -98,7 +98,7 @@ const Sidebar = ({ children }) => {
                 Compras
                 {openCompras ? <IoIosArrowDown className="ml-auto" /> : <IoIosArrowForward className="ml-auto" />}
               </div>
-              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openCompras ? 'max-h-40' : 'max-h-0'}`}>
+              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openCompras ? 'max-h-40' : 'max-h-2'}`}>
                 <li>
                   <Link
                     to="/compras/itens"

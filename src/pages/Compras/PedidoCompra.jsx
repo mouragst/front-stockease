@@ -6,10 +6,8 @@ function PedidoCompra() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itensPedido, setItensPedido] = useState([]);
 
-    // Função para abrir o modal
     const handleOpenModal = () => setIsModalOpen(true);
 
-    // Função para fechar o modal
     const handleCloseModal = () => setIsModalOpen(false);
 
     return (

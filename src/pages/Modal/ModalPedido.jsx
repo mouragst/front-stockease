@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { apiUrl } from '../../config';
+import Loading from '../../components/Loading/Loading';
 
 function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     const [unidades, setUnidades] = useState([]);
+    const [produtos, setProdutos] = useState([]);
     const [selectedUnidade, setSelectedUnidade] = useState('');
     const [codigoProduto, setCodigoProduto] = useState('');
     const [descricao, setDescricao] = useState('');
@@ -13,6 +15,17 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     const [valorUnitario, setValorUnitario] = useState('');
     const [unidade, setUnidade] = useState('');
     const [isFieldsEnabled, setIsFieldsEnabled] = useState(false);
+    const [itensVisivel, setItensVisivel] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        fetch(`${apiUrl}/api/produtos`)
+            .then((response) => response.json())
+            .then((data) => setProdutos(data))
+            .catch((error) => {
+                console.error("Erro ao buscar produtos:", error)
+            })
+    }, [])
 
     useEffect(() => {
         fetch(`${apiUrl}/api/unidades`)
@@ -23,8 +36,9 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
             });
     }, []);
 
-    const handleFetchProduto = () => {
+    const handleFetchProduto = (codigoProduto) => {
         if (codigoProduto && selectedUnidade) {
+            setLoading(true);
             fetch(`${apiUrl}/api/produtos/${codigoProduto}`)
                 .then((response) => response.json())
                 .then((produto) => {
@@ -47,13 +61,11 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                 .catch((error) => {
                     console.error('Erro ao buscar produto ou estoque da unidade:', error);
                     setEstoqueAtual('Erro ao buscar estoque');
+                }).finally(() => {
+                    setLoading(false);
                 });
         }
     };
-
-    useEffect(() => {
-        handleFetchProduto();
-    }, [codigoProduto, selectedUnidade]);
 
     const handleAddItem = () => {
         const novoItem = {
@@ -74,17 +86,10 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
         setUnidade(e.target.value);
     };
 
-    // Função para gerar um número de pedido (simulação, pode ser ajustado para lógica do backend)
-    const gerarNumeroPedido = () => {
-        return `PED-${new Date().getTime()}`;
-    };
 
-    // Função para finalizar o pedido e enviar os itens para a API
     const handleFinalizarPedido = () => {
-        const numeroPedido = gerarNumeroPedido(); // Exemplo de geração de número de pedido
 
         const pedidoData = {
-            id: numeroPedido, // Número do pedido
             itens: itensPedido.map((item) => ({
                 codigo_sku: item.codigoProduto,
                 quantidade: item.quantidade,
@@ -94,7 +99,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                 razao_social_fornecedor: razaoSocialFornecedor,
                 cnpj_unidade: selectedUnidade,
                 unidade: item.unidade,
-                status: 'Pendente', // ou outro status desejado
+                status: 'Pendente',
                 created_at: new Date().toISOString(),
             }))
         };
@@ -114,17 +119,23 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
         })
         .then((data) => {
             console.log('Pedido salvo com sucesso:', data);
-            // Limpa os itens do pedido após o envio
             setItensPedido([]);
-            onClose(); // Fecha o modal após finalizar o pedido
+            onClose();
         })
         .catch((error) => {
             console.error('Erro ao finalizar o pedido:', error);
         });
     };
 
+    const itemChange = (e) => {
+        setItensVisivel(true);
+        setCodigoProduto(e)
+    }
+
+
     return (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
+            {loading && <Loading />}
             <div className="bg-gray-900 p-8 rounded-lg w-full max-w-4xl text-slate-300">
                 <h2 className="text-3xl mb-4">Adicionar Item ao Pedido</h2>
                 <form>
@@ -147,15 +158,40 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
 
                         <div>
                             <label className="block text-slate-300">Código SKU</label>
-                            <input
-                                type="text"
-                                className="w-full p-2 border rounded bg-gray-700 text-white"
-                                placeholder='Digite o código SKU do produto'
-                                value={codigoProduto}
-                                onChange={(e) => setCodigoProduto(e.target.value)}
-                                onBlur={handleFetchProduto}
-                                disabled={!isFieldsEnabled}
-                            />
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    className="w-full p-2 border rounded bg-gray-700 text-white"
+                                    value={codigoProduto}
+                                    onChange={(e) => itemChange(e.target.value)}
+                                    disabled={!isFieldsEnabled}
+                                    placeholder="Digite o código SKU do produto"
+                                />
+                                {codigoProduto && itensVisivel && produtos.some((produto) =>
+                                    produto.codigoSku.toLowerCase().includes(codigoProduto.toLowerCase())
+                                ) && (
+                                    <ul className="absolute bg-gray-700 border border-gray-600 w-full mt-1 max-h-40 overflow-y-auto z-10">
+                                        {produtos
+                                            .filter((produto) =>
+                                                produto.codigoSku.toLowerCase().includes(codigoProduto.toLowerCase())
+                                            )
+                                            .map((produto) => (
+                                                <li
+                                                    key={produto.id}
+                                                    className="p-2 cursor-pointer hover:bg-gray-600"
+                                                    onClick={() => {
+                                                        setCodigoProduto(produto.codigoSku);
+                                                        setDescricao(produto.descricao);
+                                                        handleFetchProduto(produto.codigoSku);
+                                                        setItensVisivel(false);
+                                                    }}
+                                                >
+                                                    {produto.codigoSku} - {produto.descricao}
+                                                </li>
+                                            ))}
+                                    </ul>
+                                )}
+                            </div>
                         </div>
 
                         <div>

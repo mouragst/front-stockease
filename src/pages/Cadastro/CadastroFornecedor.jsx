@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../../config';
+import Loading from '../../components/Loading/Loading';
 import Sidebar from '../Sidebar/Sidebar';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import ModalCadastroFornecedor from '../Modal/ModalCadastroFornecedor';
-import { apiUrl } from '../../config';
 
 function CadastroFornecedor() {
     const [fornecedores, setFornecedores] = useState([]);
@@ -113,13 +114,7 @@ function CadastroFornecedor() {
     if (loading) {
         return (
             <Sidebar>
-                <div className="flex flex-col p-1">
-                    <h1 className="text-slate-200 font-bold">Cadastro de Fornecedor</h1>
-                    <div className="p-2 border-b border-gray-800" />
-                    <div className="flex justify-center items-center h-full">
-                        <p className="text-slate-200">Carregando fornecedores...</p>
-                    </div>
-                </div>
+                <Loading />
             </Sidebar>
         );
     }

@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import ModalServico from '../Modal/ModalServico';
 
@@ -6,10 +6,8 @@ function OrdemServico() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [servicosOrdem, setServicosOrdem] = useState([]);
 
-    // Função para abrir o modal
     const handleOpenModal = () => setIsModalOpen(true);
 
-    // Função para fechar o modal
     const handleCloseModal = () => setIsModalOpen(false);
 
     return (

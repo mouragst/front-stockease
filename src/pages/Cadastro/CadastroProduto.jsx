@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../../config';
+import Loading from '../../components/Loading/Loading';
 import Sidebar from '../Sidebar/Sidebar';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import ModalCadastroProduto from '../Modal/ModalCadastroProduto';
-import { apiUrl } from '../../config'; // Certifique-se de que apiUrl está configurado corretamente
 
 function CadastroProduto() {
     const [modalVisible, setModalVisible] = useState(false);
@@ -14,18 +15,15 @@ function CadastroProduto() {
     const [produtoApagar, setProdutoApagar] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // Função para abrir o modal de cadastro
     const abrirModal = () => {
         setModalVisible(true);
     };
 
-    // Função para fechar o modal
     const fecharModal = () => {
         setModalVisible(false);
         setProdutoEditar(null);
     };
 
-    // Função para buscar os produtos na API
     const fetchProdutos = async () => {
         setLoading(true);
         try {
@@ -43,36 +41,34 @@ function CadastroProduto() {
         }
     };
 
-    // Função para editar o produto, agora usando o produto já carregado
     const editarProduto = (id) => {
-        const produto = produtos.find((p) => p.id === id); // Encontra o produto na lista
+        const produto = produtos.find((p) => p.id === id);
         if (produto) {
-            setProdutoEditar(produto); // Define o produto a ser editado
-            setModalVisible(true); // Abre o modal de edição
+            setProdutoEditar(produto);
+            setModalVisible(true);
         } else {
             console.error('Produto não encontrado');
         }
     };
 
-    // Função para confirmar exclusão e abrir o modal
     const confirmarExclusao = (produto) => {
-        setProdutoApagar(produto); // Define o produto a ser apagado
-        setModalConfirmVisible(true); // Abre o modal de confirmação
+        setProdutoApagar(produto);
+        setModalConfirmVisible(true);
     };
 
     // Função para apagar o produto
     const apagarProduto = async () => {
         try {
             const response = await fetch(`${apiUrl}/api/produtos/${produtoApagar.id}`, {
-                method: 'PATCH', // PATCH para "desativar" o produto
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ ativo: false }), // Define o produto como inativo
+                body: JSON.stringify({ ativo: false }),
             });
             if (response.ok) {
-                setModalConfirmVisible(false); // Fecha o modal de confirmação
-                fetchProdutos(); // Atualiza a lista de produtos
+                setModalConfirmVisible(false); 
+                fetchProdutos(); 
             } else {
                 console.error('Erro ao apagar produto:', response.statusText);
             }
@@ -81,17 +77,23 @@ function CadastroProduto() {
         }
     };
 
-    // useEffect para buscar os produtos quando o componente é montado
     useEffect(() => {
         fetchProdutos();
     }, []);
 
-    // Filtrar os produtos com base na busca
     const produtosFiltrados = produtos.filter(produto =>
         produto.descricao.toLowerCase().includes(busca.toLowerCase()) ||
         produto.codigoSku.includes(busca)
     );
 
+    if (loading) {
+        return (
+            <Sidebar>
+                <Loading />
+            </Sidebar>
+        );
+    }
+    
     return (
         <>
             <Sidebar>

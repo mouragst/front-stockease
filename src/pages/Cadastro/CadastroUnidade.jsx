@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../../config';
+import Loading from '../../components/Loading/Loading';
 import Sidebar from '../Sidebar/Sidebar';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import ModalCadastroUnidade from '../Modal/ModalCadastroUnidade';
-import { apiUrl } from '../../config'; // Certifique-se de que apiUrl está configurado corretamente
 
 function CadastroUnidade() {
     const [modalVisible, setModalVisible] = useState(false);
@@ -14,12 +15,10 @@ function CadastroUnidade() {
     const [unidadeApagar, setUnidadeApagar] = useState(null);
     const [modalConfirmVisible, setModalConfirmVisible] = useState(false);
 
-    // Função para abrir o modal de cadastro
     const abrirModal = () => {
         setModalVisible(true);
     };
 
-    // Função para fechar o modal
     const fecharModal = () => {
         setModalVisible(false);
         setUnidadeEditar(null);
@@ -31,16 +30,15 @@ function CadastroUnidade() {
     };
 
     const editarProduto = (id) => {
-        const unidade = unidades.find((p) => p.id === id); // Encontra o produto na lista
+        const unidade = unidades.find((p) => p.id === id);
         if (unidade) {
-            setUnidadeEditar(unidade); // Define o produto a ser editado
-            setModalVisible(true); // Abre o modal de edição
+            setUnidadeEditar(unidade); 
+            setModalVisible(true); 
         } else {
             console.error('Produto não encontrado');
         }
     };
 
-    // Função para buscar as unidades na API
     const fetchUnidades = async () => {
         setLoading(true);
         try {
@@ -58,7 +56,6 @@ function CadastroUnidade() {
         }
     };
 
-    // useEffect para buscar as unidades quando o componente é montado
     useEffect(() => {
         fetchUnidades();
     }, []);
@@ -83,11 +80,18 @@ function CadastroUnidade() {
         }
     };
 
-    // Filtrar as unidades com base na busca
     const unidadesFiltradas = unidades.filter(unidade =>
         unidade.razaoSocial.toLowerCase().includes(busca.toLowerCase()) ||
         unidade.cnpj.includes(busca)
     );
+
+    if (loading) {
+        return (
+            <Sidebar>
+                <Loading />
+            </Sidebar>
+        );
+    }
 
     return (
         <>

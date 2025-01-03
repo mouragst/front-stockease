@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { apiUrl } from '../../config';
@@ -154,5 +155,26 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
         </div>
     );
 }
+ModalCadastroFornecedor.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    fornecedor: PropTypes.shape({
+        id: PropTypes.number,
+        codigo: PropTypes.string,
+        razaoSocial: PropTypes.string,
+        cnpj: PropTypes.string,
+        inscricaoMunicipal: PropTypes.string,
+        inscricaoEstadual: PropTypes.string,
+        endereco: PropTypes.string,
+        cidade: PropTypes.string,
+        cep: PropTypes.string,
+        uf: PropTypes.string,
+        telefone: PropTypes.string,
+        email: PropTypes.string,
+        contato: PropTypes.string,
+        categoria: PropTypes.string,
+        familiaProdutos: PropTypes.string,
+        familiaServicos: PropTypes.string,
+    }),
+};
 
 export default ModalCadastroFornecedor;
