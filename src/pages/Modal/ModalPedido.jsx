@@ -5,6 +5,7 @@ import Loading from '../../components/Loading/Loading';
 function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     const [unidades, setUnidades] = useState([]);
     const [produtos, setProdutos] = useState([]);
+    const [idProduto, setIdProduto] = useState('');
     const [selectedUnidade, setSelectedUnidade] = useState('');
     const [codigoProduto, setCodigoProduto] = useState('');
     const [descricao, setDescricao] = useState('');
@@ -69,6 +70,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
 
     const handleAddItem = () => {
         const novoItem = {
+            idProduto,
             codigoProduto,
             descricao,
             quantidade: parseFloat(quantidade),
@@ -86,30 +88,22 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
         setUnidade(e.target.value);
     };
 
-
     const handleFinalizarPedido = () => {
 
-        const pedidoData = {
-            itens: itensPedido.map((item) => ({
-                codigo_sku: item.codigoProduto,
-                quantidade: item.quantidade,
-                valor_unitario: item.valorUnitario,
-                valor_total_produto: item.valorTotal,
-                cnpj_fornecedor: cnpjFornecedor,
-                razao_social_fornecedor: razaoSocialFornecedor,
-                cnpj_unidade: selectedUnidade,
-                unidade: item.unidade,
-                status: 'Pendente',
-                created_at: new Date().toISOString(),
-            }))
-        };
+        const unidadeSelecionada = unidades.find(u => u.id === parseInt(unidade));
+        const pedido = {
+            cnpjUnidade: unidadeSelecionada ? unidadeSelecionada.cnpj : null,
+            unidade: unidade,
+            valorTotalProduto: itensPedido.reduce((acc, item) => acc + item.valorTotal, 0),
+            status: 'Pendente',
+        }
 
         fetch(`${apiUrl}/api/compras`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(pedidoData),
+            body: JSON.stringify(pedido),
         })
         .then((response) => {
             if (!response.ok) {
@@ -118,8 +112,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
             return response.json();
         })
         .then((data) => {
-            console.log('Pedido salvo com sucesso:', data);
-            setItensPedido([]);
+            adicionarItens(data);
             onClose();
         })
         .catch((error) => {
@@ -127,11 +120,42 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
         });
     };
 
+    const adicionarItens = (unidade) => {
+
+        const itensDoPedido = itensPedido.map((item) => ({
+                codigoSku: item.codigoProduto,
+                valor_unitario: item.valorUnitario,
+                quantidade: item.quantidade,
+                cnpj_fornecedor: cnpjFornecedor,
+                razao_social_fornecedor: razaoSocialFornecedor,
+                cnpj_unidade: selectedUnidade,
+                unidade: item.unidade,
+                status: 'Pendente',
+                created_at: new Date().toISOString(),
+                id_produto: produtos.find((produto) => produto.codigoSku === item.codigoProduto).id,
+            }))
+
+            console.log(itensPedido);
+
+        fetch(`${apiUrl}/api/itens/${unidade}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(itensDoPedido),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Erro ao salvar os itens do pedido');
+            }
+            return response.json();
+        })
+    }
+
     const itemChange = (e) => {
         setItensVisivel(true);
         setCodigoProduto(e)
     }
-
 
     return (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
@@ -149,9 +173,10 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                             >
                                 <option value="">Selecione a Unidade Matriz</option>
                                 {unidades.map((unidade) => (
-                                    <option key={unidade.id} value={unidade.id}>
-                                        {unidade.id} - {unidade.razaoSocial} ({unidade.cidade})
-                                    </option>
+
+                                        <option key={unidade.id} value={unidade.id}>
+                                            {unidade.id} - {unidade.razaoSocial} ({unidade.cidade})
+                                        </option>
                                 ))}
                             </select>
                         </div>
@@ -181,6 +206,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                                                     className="p-2 cursor-pointer hover:bg-gray-600"
                                                     onClick={() => {
                                                         setCodigoProduto(produto.codigoSku);
+                                                        setIdProduto(produto.id);
                                                         setDescricao(produto.descricao);
                                                         handleFetchProduto(produto.codigoSku);
                                                         setItensVisivel(false);
