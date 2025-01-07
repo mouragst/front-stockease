@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
+import ModalVisualizarPedido from '../Modal/ModalVisualizarPedido';
 import ModalPedido from '../Modal/ModalPedido';
 import { apiUrl } from '../../config';
 
 function PedidoCompra() {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalVisualizarPedidoOpen, setIsModalVisualizarPedidoOpen] = useState(false);
+    const [isModalPedidoOpen, setIsModalPedidoOpen] = useState(false);
     const [itensPedido, setItensPedido] = useState([]);
     const [pedidos, setPedidos] = useState([]);
+    const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
 
     useEffect(() => {
         fetch(`${apiUrl}/api/compras`)
@@ -15,42 +18,77 @@ function PedidoCompra() {
             .catch(error => console.error('Erro ao buscar pedidos:', error));
     }, []);
 
-    const handleOpenModal = () => setIsModalOpen(true);
+    const buscarPedidos = async () => {
+        try {
+            const response = await fetch(`${apiUrl}/api/compras`);
+            if (!response.ok) {
+                throw new Error('Erro ao buscar pedidos');
+            }
+            const data = await response.json();
+            setPedidos(data);
+        } catch (error) {
+            console.error('Erro:', error);
+        }
+    }
 
-    const handleCloseModal = () => setIsModalOpen(false);
+    const handleOpenModal = () => setIsModalPedidoOpen(true);
 
-    const handleViewPedido = (id) => {
-        // Lógica para visualizar o pedido
-        console.log('Visualizar pedido', id);
+    const handleClosePedidoModal = () => {
+        setIsModalPedidoOpen(false);
+        setPedidoSelecionado(null);
     };
 
-    const handleEditPedido = (id) => {
-        // Lógica para editar o pedido
-        console.log('Editar pedido', id);
+    const handleCloseVisualizarPedidoModal = () => {
+        setIsModalVisualizarPedidoOpen(false);
+        setPedidoSelecionado(null);
     };
 
-    const handleDeletePedido = (id) => {
-        // Lógica para excluir o pedido
-        console.log('Excluir pedido', id);
+    const handleViewPedido = async (id) => {
+        try {
+            const response = await fetch(`${apiUrl}/api/compras/pedido/${id}`);
+            if (!response.ok) {
+                throw new Error('Erro ao buscar o pedido');
+            }
+            const pedido = await response.json();
+            setPedidoSelecionado(pedido);
+            setIsModalVisualizarPedidoOpen(true);
+        } catch (error) {
+            console.error('Erro:', error);
+        }
+    };
+
+    const handleCancelarPedido = async (id) => {
+        try {
+            const response = await fetch(`${apiUrl}/api/compras/pedido/${id}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                throw new Error('Erro ao buscar o pedido');
+            }
+            buscarPedidos();
+        } catch (error) {
+            console.error('Erro:', error);
+        }
     };
 
     return (
         <Sidebar>
             <div className='p-4'>
                 <h1 className='text-2xl text-gray-300 mb-4'>Pedido de compras</h1>
-                {/* Botão para abrir o modal de adicionar pedidos */}
                 <button 
                     className='bg-blue-500 text-gray-900 px-4 py-2 rounded-md hover:bg-blue-600'
                     onClick={handleOpenModal}>
                     Novo Pedido
                 </button>
                 
-                {/* Modal para Adicionar Pedido */}
-                {isModalOpen && (
-                    <ModalPedido onClose={handleCloseModal} itensPedido={itensPedido} setItensPedido={setItensPedido} />
+                {isModalVisualizarPedidoOpen && (
+                    <ModalVisualizarPedido onClose={handleCloseVisualizarPedidoModal} itensPedido={itensPedido} setItensPedido={setItensPedido} pedido={pedidoSelecionado} />
                 )}
 
-                {/* Tabela de Pedidos */}
+                {isModalPedidoOpen && (
+                    <ModalPedido onClose={handleClosePedidoModal} itensPedido={itensPedido} setItensPedido={setItensPedido} />
+                )}
+
                 <div className="mt-6">
                     <h2 className="text-xl text-gray-300 mb-4">Pedidos Recentes</h2>
                     <div className="overflow-x-auto">
@@ -77,22 +115,7 @@ function PedidoCompra() {
                                         <td className="py-3 px-6 text-left">{pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : 'N/A'}</td>
                                         <td className="py-3 px-6 text-left">
                                             <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" onClick={() => handleViewPedido(pedido.id)}>Visualizar pedido</button>
-                                            <button className="bg-yellow-500 text-white ml-2 px-2 py-1 rounded hover:bg-yellow-600" onClick={() => handleEditPedido(pedido.id)}>Editar</button>
-                                            <button className="bg-red-500 text-white ml-2 px-2 py-1 rounded hover:bg-red-600" onClick={() => handleDeletePedido(pedido.id)}>Excluir</button>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {itensPedido.map((item, index) => (
-                                    <tr key={index} className="border-b border-gray-600 hover:bg-gray-700">
-                                        <td className="py-3 px-6 text-left whitespace-nowrap">{index + 1}</td>
-                                        <td className="py-3 px-6 text-left">{new Date().toLocaleDateString()}</td>
-                                        <td className="py-3 px-6 text-left">{item.unidade}</td>
-                                        <td className="py-3 px-6 text-left">{item.quantidade}</td>
-                                        <td className="py-3 px-6 text-left">R$ {item.valorTotal}</td>
-                                        <td className="py-3 px-6 text-left">
-                                            <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" onClick={() => handleViewPedido(index)}>Visualizar pedido</button>
-                                            <button className="bg-yellow-500 text-white ml-2 px-2 py-1 rounded hover:bg-yellow-600" onClick={() => handleEditPedido(index)}>Editar</button>
-                                            <button className="bg-red-500 text-white ml-2 px-2 py-1 rounded hover:bg-red-600" onClick={() => handleDeletePedido(index)}>Excluir</button>
+                                            <button className="bg-red-500 text-white ml-2 px-2 py-1 rounded hover:bg-red-600" onClick={() => handleCancelarPedido(pedido.id)}>Cancelar</button>
                                         </td>
                                     </tr>
                                 ))}
