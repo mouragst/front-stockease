@@ -61,7 +61,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                 })
                 .catch((error) => {
                     console.error('Erro ao buscar produto ou estoque da unidade:', error);
-                    setEstoqueAtual('Erro ao buscar estoque');
+                    setEstoqueAtual('0');
                 }).finally(() => {
                     setLoading(false);
                 });
@@ -79,7 +79,19 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
             valorUnitario: parseFloat(valorUnitario),
             valorTotal: parseFloat(quantidade) * parseFloat(valorUnitario),
         };
-        setItensPedido([...itensPedido, novoItem]);
+    
+        const itemExistente = itensPedido.find(item => item.codigoProduto === codigoProduto);
+    
+        if (itemExistente) {
+            const itensAtualizados = itensPedido.map(item => 
+                item.codigoProduto === codigoProduto 
+                    ? { ...item, quantidade: item.quantidade + novoItem.quantidade, valorTotal: (item.quantidade + novoItem.quantidade) * item.valorUnitario }
+                    : item
+            );
+            setItensPedido(itensAtualizados);
+        } else {
+            setItensPedido([...itensPedido, novoItem]);
+        }
     };
 
     const handleUnidadeChange = (e) => {
@@ -93,15 +105,15 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
         const unidadeSelecionada = unidades.find(u => u.id === parseInt(unidade));
         const pedido = {
             cnpjUnidade: unidadeSelecionada ? unidadeSelecionada.cnpj : null,
-            unidade: unidade,
-            valorTotalProduto: itensPedido.reduce((acc, item) => acc + item.valorTotal, 0),
+            unidade: Number(unidade),
+            valorTotalProduto: parseFloat(itensPedido.reduce((acc, item) => acc + item.valorTotal, 0).toFixed(2)),
             status: 'Pendente',
         }
-
+    
         fetch(`${apiUrl}/api/compras`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(pedido),
         })
@@ -129,7 +141,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                 cnpj_fornecedor: cnpjFornecedor,
                 razao_social_fornecedor: razaoSocialFornecedor,
                 cnpj_unidade: selectedUnidade,
-                unidade: item.unidade,
+                unidade: Number(item.unidade),
                 status: 'Pendente',
                 created_at: new Date().toISOString(),
                 id_produto: produtos.find((produto) => produto.codigoSku === item.codigoProduto).id,
@@ -160,7 +172,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     return (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
             {loading && <Loading />}
-            <div className="bg-gray-900 p-8 rounded-lg w-full max-w-4xl text-slate-300">
+            <div className="bg-gray-900 p-8 rounded-lg w-full max-w-6xl text-slate-300">
                 <h2 className="text-3xl mb-4">Adicionar Item ao Pedido</h2>
                 <form>
                     <div className="grid grid-cols-2 gap-4">
@@ -243,7 +255,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                         </div>
 
                         <div>
-                            <label className="block text-slate-300">CNPJ Fornecedor</label>
+                            <label className="block text-slate-300">CNPJ/CPF Fornecedor</label>
                             <input
                                 type="text"
                                 className="w-full p-2 border rounded bg-gray-800 text-white"
@@ -251,7 +263,7 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                                     ? `${cnpjFornecedor.slice(0,2)}.${cnpjFornecedor.slice(2,5)}.${cnpjFornecedor.slice(5,8)}/${cnpjFornecedor.slice(8,12)}-${cnpjFornecedor.slice(12)}`
                                     : cnpjFornecedor.length > 0
                                         ? `${cnpjFornecedor.slice(0,3)}.${cnpjFornecedor.slice(3,6)}.${cnpjFornecedor.slice(6,9)}-${cnpjFornecedor.slice(9)}`
-                                        : 'N/A'
+                                        : ''
                                 }
                                 disabled
                             />
@@ -300,7 +312,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                 </form>
 
                 <h3 className="text-xl mt-8 mb-4">Itens do Pedido</h3>
-                {itensPedido.length > 0 ? (
                     <div className="overflow-x-auto">
                         <table className="min-w-full bg-gray-800 border border-gray-700">
                             <thead>
@@ -312,10 +323,12 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                                     <th className="py-2 px-4 border-b border-gray-700 text-left">Estoque Atual</th>
                                     <th className="py-2 px-4 border-b border-gray-700 text-left">Valor Unitário</th>
                                     <th className="py-2 px-4 border-b border-gray-700 text-left">Valor Total</th>
+                                    <th className="py-2 px-4 border-b border-gray-700 text-left">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {itensPedido.map((item, index) => (
+                            {itensPedido.length > 0 ? (
+                                itensPedido.map((item, index) => (
                                     <tr key={index} className="hover:bg-gray-700">
                                         <td className="py-2 px-4 border-b border-gray-700">{item.codigoProduto}</td>
                                         <td className="py-2 px-4 border-b border-gray-700">{item.descricao}</td>
@@ -324,14 +337,17 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
                                         <td className="py-2 px-4 border-b border-gray-700">{item.estoqueAtual}</td>
                                         <td className="py-2 px-4 border-b border-gray-700">{item.valorUnitario.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                                         <td className="py-2 px-4 border-b border-gray-700">{item.valorTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                                        <td className="py-2 px-4 border-b border-gray-700"><button className="bg-red-500 hover:bg-red-600 text-white py-1 px-2 rounded" onClick={() => setItensPedido(itensPedido.filter((_, i) => i !== index))}>Remover</button></td>
                                     </tr>
-                                ))}
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="7" className="py-2 px-4 border-b border-gray-700 text-center">Nenhum item adicionado</td>
+                                </tr>
+                            )}
                             </tbody>
                         </table>
                     </div>
-                ) : (
-                    <p className="text-center mt-4">Nenhum item adicionado.</p>
-                )}
 
                 <div className="mt-8 flex justify-end">
                     <button

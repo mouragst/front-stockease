@@ -7,9 +7,11 @@ import { apiUrl } from '../../config';
 function PedidoCompra() {
     const [isModalVisualizarPedidoOpen, setIsModalVisualizarPedidoOpen] = useState(false);
     const [isModalPedidoOpen, setIsModalPedidoOpen] = useState(false);
+    const [isModalConfirmarCancelamentoOpen, setIsModalConfirmarCancelamentoOpen] = useState(false);
     const [itensPedido, setItensPedido] = useState([]);
     const [pedidos, setPedidos] = useState([]);
     const [pedidoSelecionado, setPedidoSelecionado] = useState(null);
+    const [pedidoParaCancelar, setPedidoParaCancelar] = useState(null);
 
     useEffect(() => {
         fetch(`${apiUrl}/api/compras`)
@@ -35,6 +37,7 @@ function PedidoCompra() {
 
     const handleClosePedidoModal = () => {
         setIsModalPedidoOpen(false);
+        setItensPedido([]);
         setPedidoSelecionado(null);
     };
 
@@ -57,15 +60,26 @@ function PedidoCompra() {
         }
     };
 
-    const handleCancelarPedido = async (id) => {
+    const handleOpenConfirmarCancelamentoModal = (id) => {
+        setPedidoParaCancelar(id);
+        setIsModalConfirmarCancelamentoOpen(true);
+    };
+
+    const handleCloseConfirmarCancelamentoModal = () => {
+        setIsModalConfirmarCancelamentoOpen(false);
+        setPedidoParaCancelar(null);
+    };
+
+    const handleConfirmarCancelamento = async () => {
         try {
-            const response = await fetch(`${apiUrl}/api/compras/pedido/${id}`, {
+            const response = await fetch(`${apiUrl}/api/compras/pedido/${pedidoParaCancelar}`, {
                 method: 'DELETE'
             });
             if (!response.ok) {
-                throw new Error('Erro ao buscar o pedido');
+                throw new Error('Erro ao cancelar o pedido');
             }
             buscarPedidos();
+            handleCloseConfirmarCancelamentoModal();
         } catch (error) {
             console.error('Erro:', error);
         }
@@ -87,6 +101,19 @@ function PedidoCompra() {
 
                 {isModalPedidoOpen && (
                     <ModalPedido onClose={handleClosePedidoModal} itensPedido={itensPedido} setItensPedido={setItensPedido} />
+                )}
+
+                {isModalConfirmarCancelamentoOpen && (
+                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                        <div className="bg-gray-700 text-slate-200 border border-gray-600 p-4 rounded">
+                            <h2 className="text-xl mb-4">Confirmar Cancelamento</h2>
+                            <p>Tem certeza que deseja cancelar este pedido?</p>
+                            <div className="mt-4 flex justify-end">
+                                <button className="bg-green-500 text-white px-4 py-2 rounded mr-2" onClick={handleCloseConfirmarCancelamentoModal}>Não</button>
+                                <button className="bg-red-500 text-white px-4 py-2 rounded" onClick={handleConfirmarCancelamento}>Sim</button>
+                            </div>
+                        </div>
+                    </div>
                 )}
 
                 <div className="mt-6">
@@ -115,7 +142,7 @@ function PedidoCompra() {
                                         <td className="py-3 px-6 text-left">{pedido.createdAt ? new Date(pedido.createdAt).toLocaleDateString() : 'N/A'}</td>
                                         <td className="py-3 px-6 text-left">
                                             <button className="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600" onClick={() => handleViewPedido(pedido.id)}>Visualizar pedido</button>
-                                            <button className="bg-red-500 text-white ml-2 px-2 py-1 rounded hover:bg-red-600" onClick={() => handleCancelarPedido(pedido.id)}>Cancelar</button>
+                                            <button className="bg-red-500 text-white ml-2 px-2 py-1 rounded hover:bg-red-600" onClick={() => handleOpenConfirmarCancelamentoModal(pedido.id)}>Cancelar</button>
                                         </td>
                                     </tr>
                                 ))}

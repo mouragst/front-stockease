@@ -1,13 +1,12 @@
-import React from 'react';
+import 'react';
 
 const Login = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900">
+    <div className="flex items-center justify-center min-h-screen bg-gray-800">
       <div>
-        <h1 className="text-4xl font-bold text-slate-200 mb-4 text-center">StockEase</h1>
         
         {/* Aumentando a largura do formulário */}
-        <div className="p-8 rounded-lg shadow-md w-[475px] bg-gray-800 border border-gray-700">
+        <div className="p-8 rounded-lg shadow-md w-[475px] bg-gray-900 border border-gray-600">
           <h2 className="text-2xl font-semibold text-slate-200">Faça o seu login</h2>
           <form className="mt-4">
             <div>

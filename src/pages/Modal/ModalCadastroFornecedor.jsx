@@ -8,6 +8,7 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
     const [codigo, setCodigo] = useState('');
     const [razaoSocial, setRazaoSocial] = useState('');
     const [cnpj, setCnpj] = useState('');
+    const [numeroLogradouro, setNumeroLogradouro] = useState('');
     const [inscricaoMunicipal, setInscricaoMunicipal] = useState('');
     const [inscricaoEstadual, setInscricaoEstadual] = useState('');
     const [endereco, setEndereco] = useState('');
@@ -34,6 +35,7 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
             setCidade(fornecedor.cidade || '');
             setCep(fornecedor.cep || '');
             setUf(fornecedor.uf || '');
+            setNumeroLogradouro(fornecedor.numeroLogradouro || '');
             setTelefone(fornecedor.telefone || '');
             setEmail(fornecedor.email || '');
             setContato(fornecedor.contato || '');
@@ -64,6 +66,8 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
 
         setLoading(true);
 
+        if (razaoSocial === '') { console.log("Razão Social é obrigatória"), setLoading(false); return; } 
+
         try {
             const method = fornecedor?.id ? 'PUT' : 'POST';
             const url = fornecedor?.id 
@@ -92,6 +96,32 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
         }
     };
 
+    const consultaCnpj = async () => {
+        if (cnpj.length !== 14) { return }
+        try {
+            // API COM USO LIMITADO DE 5 REQUISIÇÕES POR MINUTO, COMO É PARA PORTFÓLIO, JÁ ESTÁ EXCELENTE
+            const response = await fetch(`https://open.cnpja.com/office/${cnpj}`);
+            const dadosFornecedor = await response.json();
+            setRazaoSocial(dadosFornecedor.company.name);
+        } catch (error) {
+            console.error('Erro ao consultar CNPJ:', error);
+        }
+    };
+
+    const consultaCep = async () => {
+        if (cep.length !== 8) { return }
+        try {
+            // Consulta o CEP na API ViaCEP
+            const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+            const dadosEndereco = await response.json();
+            setEndereco(dadosEndereco.logradouro);
+            setCidade(dadosEndereco.localidade);
+            setUf(dadosEndereco.uf);
+        } catch (error) {
+            console.error('Erro ao consultar CEP:', error);
+        }
+    }
+
     const resetForm = () => {
         setCodigo('');
         setRazaoSocial('');
@@ -112,34 +142,32 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-1/2">
+            <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-1/2 border border-gray-500">
                 <h2 className="text-xl font-bold mb-6 text-slate-300">
                     {fornecedor ? 'Editar Fornecedor' : 'Cadastrar Fornecedor'}
                 </h2>
 
                 <div className="grid grid-cols-2 gap-6 mb-6">
-                    <Input label="Razão Social" value={razaoSocial} onChange={(e) => setRazaoSocial(e.target.value)} placeholder="Digite a razão social" />
-                    <Input label="CNPJ/CPF" value={cnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="Digite o CNPJ ou CPF" />
-
-                    <Input label="Endereço" value={endereco} onChange={(e) => setEndereco(e.target.value)} placeholder="Digite o endereço" />
-                    <Input label="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder="Digite a cidade" />
-
-                    <div className="grid grid-cols-3 gap-4">
-                        <Input label="CEP" value={cep} onChange={(e) => setCep(e.target.value)} placeholder="Digite o CEP" />
-                        <Input label="UF" value={uf} onChange={(e) => setUf(e.target.value)} placeholder="Digite o UF" />
-                        <Input label="Telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite o telefone" />
-                    </div>
-
-                    <Input label="Email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Digite o email" />
-                    <Input label="Contato" value={contato} onChange={(e) => setContato(e.target.value)} placeholder="Digite o contato" />
+                    <Input label="CNPJ/CPF" value={cnpj} onBlur={consultaCnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="Digite o CNPJ ou CPF" />
+                    <Input label="Razão Social" value={razaoSocial} placeholder="Digite a razão social" disabled/>
 
                     <Input label="Inscrição Municipal" value={inscricaoMunicipal} onChange={(e) => setInscricaoMunicipal(e.target.value)} placeholder="Digite a inscrição municipal" />
                     <Input label="Inscrição Estadual" value={inscricaoEstadual} onChange={(e) => setInscricaoEstadual(e.target.value)} placeholder="Digite a inscrição estadual" />
 
                     <div className="grid grid-cols-3 gap-4">
+                        <Input label="CEP" value={cep} onBlur={consultaCep} onChange={(e) => setCep(e.target.value)} placeholder="Digite o CEP" />
+                        <Input label="UF" value={uf} onChange={(e) => setUf(e.target.value)} disabled placeholder="Digite o UF" />
+                        <Input label="NumeroLogradouro" value={numeroLogradouro} onChange={(e) => setNumeroLogradouro(e.target.value)} placeholder="Digite o numero do logradouro" />
+                    </div>
+
+                    <Input label="Endereço" value={endereco} onChange={(e) => setEndereco(e.target.value)} disabled placeholder="Digite o endereço" />
+                    <Input label="Cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} disabled placeholder="Digite a cidade" />
+
+                    <Input label="Email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Digite o email" />
+
+                    <div className="grid grid-cols-2 gap-4">
                         <Input label="Categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)} placeholder="Categoria" />
-                        <Input label="Família de Produtos" value={familiaProdutos} onChange={(e) => setFamiliaProdutos(e.target.value)} placeholder="Família de produtos" />
-                        <Input label="Família de Serviços" value={familiaServicos} onChange={(e) => setFamiliaServicos(e.target.value)} placeholder="Família de serviços" />
+                        <Input label="Telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="Digite o telefone" />
                     </div>
                 </div>
 
@@ -162,6 +190,7 @@ ModalCadastroFornecedor.propTypes = {
         codigo: PropTypes.string,
         razaoSocial: PropTypes.string,
         cnpj: PropTypes.string,
+        numeroLogradouro: PropTypes.int,
         inscricaoMunicipal: PropTypes.string,
         inscricaoEstadual: PropTypes.string,
         endereco: PropTypes.string,

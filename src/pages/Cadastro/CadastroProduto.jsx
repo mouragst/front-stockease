@@ -22,7 +22,7 @@ function CadastroProduto() {
     const fecharModal = () => {
         setModalVisible(false);
         setProdutoEditar(null);
-    };
+    };  
 
     const fetchProdutos = async () => {
         setLoading(true);
