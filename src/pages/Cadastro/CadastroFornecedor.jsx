@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { apiUrl } from '../../config';
-import Loading from '../../components/Loading/Loading';
 import Sidebar from '../Sidebar/Sidebar';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -111,14 +110,6 @@ function CadastroFornecedor() {
         }
     };
 
-    if (loading) {
-        return (
-            <Sidebar>
-                <Loading />
-            </Sidebar>
-        );
-    }
-
     if (error) {
         return (
             <Sidebar>
@@ -157,6 +148,7 @@ function CadastroFornecedor() {
                         variant='soft'
                         intent='info'
                         size='lg'
+                        disabled={loading} // Desabilita o botão enquanto estiver carregando
                     >
                         <Button.Label>Novo Fornecedor</Button.Label>
                     </Button.Root>
@@ -175,49 +167,62 @@ function CadastroFornecedor() {
                         </tr>
                     </thead>
                     <tbody className="bg-gray-900 text-slate-300 text-sm font-light">
-                        {fornecedoresParaExibir.map(fornecedor => (
-                            <tr key={fornecedor.id} className="border-b border-gray-700 hover:bg-gray-700">
-                                <td className="p-2">{fornecedor.id}</td>
-                                <td className="p-2">
-                                    {fornecedor.cnpj.length === 14 
-                                        ? 'Jurídica'  
-                                        : fornecedor.cnpj.length === 11 
-                                            ? 'Física'  
-                                            : 'N/A'     
-                                    }
-                                </td>
-                                <td className="p-2 font">{fornecedor.razaoSocial}</td>
-                                <td className="p-2">
-                                    {fornecedor.cnpj.length === 14 
-                                        ? `${fornecedor.cnpj.slice(0,2)}.${fornecedor.cnpj.slice(2,5)}.${fornecedor.cnpj.slice(5,8)}/${fornecedor.cnpj.slice(8,12)}-${fornecedor.cnpj.slice(12)}` 
-                                        : fornecedor.cnpj.length > 0
-                                            ? `${fornecedor.cnpj.slice(0,3)}.${fornecedor.cnpj.slice(3,6)}.${fornecedor.cnpj.slice(6,9)}-${fornecedor.cnpj.slice(9)}`  
-                                            : 'N/A'
-                                    }
-                                </td>
-                                <td className="p-2">{fornecedor.categoria}</td>
-                                <td className="p-2 text-center">
-                                    <div className="flex justify-center space-x-2">
-                                        <Button.Root
-                                            className="py-1 px-2"
-                                            variant='soft'
-                                            intent='warning'
-                                            onClick={() => abrirModal(fornecedor)} // Passar fornecedor para edição
-                                        >
-                                            <Button.Label>Editar</Button.Label>
-                                        </Button.Root>
-                                        <Button.Root
-                                            className="py-1 px-2"
-                                            variant='ghost'
-                                            intent='danger'
-                                            onClick={() => confirmarApagar(fornecedor)} // Abre modal de confirmação
-                                        >
-                                            <Button.Label>Apagar</Button.Label>
-                                        </Button.Root>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))}
+                        {loading ? (
+                            Array.from({ length: itensPorPagina }).map((_, index) => (
+                                    <tr key={index} className="border border-gray-700 bg-gray-800 animate-pulse">
+                                        <td className="px-4 py-6 h-10"></td>
+                                        <td className="px-4 py-6"></td>
+                                        <td className="px-4 py-6"></td>
+                                        <td className="px-4 py-6"></td>
+                                        <td className="px-4 py-6"></td>
+                                        <td className="px-4 py-6"></td>
+                                    </tr>
+                                ))
+                        ) : (
+                            fornecedoresParaExibir.map(fornecedor => (
+                                <tr key={fornecedor.id} className="border-b border-gray-700 hover:bg-gray-700">
+                                    <td className="p-2">{fornecedor.id}</td>
+                                    <td className="p-2">
+                                        {fornecedor.cnpj.length === 14 
+                                            ? 'Jurídica'  
+                                            : fornecedor.cnpj.length === 11 
+                                                ? 'Física'  
+                                                : 'N/A'     
+                                        }
+                                    </td>
+                                    <td className="p-2 font">{fornecedor.razaoSocial}</td>
+                                    <td className="p-2">
+                                        {fornecedor.cnpj.length === 14 
+                                            ? `${fornecedor.cnpj.slice(0,2)}.${fornecedor.cnpj.slice(2,5)}.${fornecedor.cnpj.slice(5,8)}/${fornecedor.cnpj.slice(8,12)}-${fornecedor.cnpj.slice(12)}` 
+                                            : fornecedor.cnpj.length > 0
+                                                ? `${fornecedor.cnpj.slice(0,3)}.${fornecedor.cnpj.slice(3,6)}.${fornecedor.cnpj.slice(6,9)}-${fornecedor.cnpj.slice(9)}`  
+                                                : 'N/A'
+                                        }
+                                    </td>
+                                    <td className="p-2">{fornecedor.categoria}</td>
+                                    <td className="p-2 text-center">
+                                        <div className="flex justify-center space-x-2">
+                                            <Button.Root
+                                                className="py-1 px-2"
+                                                variant='soft'
+                                                intent='warning'
+                                                onClick={() => abrirModal(fornecedor)} // Passar fornecedor para edição
+                                            >
+                                                <Button.Label>Editar</Button.Label>
+                                            </Button.Root>
+                                            <Button.Root
+                                                className="py-1 px-2"
+                                                variant='ghost'
+                                                intent='danger'
+                                                onClick={() => confirmarApagar(fornecedor)} // Abre modal de confirmação
+                                            >
+                                                <Button.Label>Apagar</Button.Label>
+                                            </Button.Root>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
 

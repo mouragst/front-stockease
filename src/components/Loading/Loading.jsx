@@ -1,13 +1,13 @@
-import 'react';
-import './Loading.css';
+// import 'react';
+// import './Loading.css';
 
-function Loading() {
+// function Loading() {
 
-    return (
-        <div className="loading-container">
-            <img src='/assets/stockease_logo.png' alt="Loading..." className="loading-image" />
-        </div>
-    );
-}
+//     return (
+//         <div className="loading-container">
+//             <img src='/assets/stockease_logo.png' alt="Loading..." className="loading-image" />
+//         </div>
+//     );
+// }
 
-export default Loading;
+// export default Loading;

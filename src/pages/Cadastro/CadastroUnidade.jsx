@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { apiUrl } from '../../config';
-import Loading from '../../components/Loading/Loading';
 import Sidebar from '../Sidebar/Sidebar';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -84,14 +83,6 @@ function CadastroUnidade() {
         unidade.razaoSocial.toLowerCase().includes(busca.toLowerCase()) ||
         unidade.cnpj.includes(busca)
     );
-
-    if (loading) {
-        return (
-            <Sidebar>
-                <Loading />
-            </Sidebar>
-        );
-    }
 
     return (
         <>

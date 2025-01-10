@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { apiUrl } from '../../config';
-import Loading from '../../components/Loading/Loading';
 
 function ModalPedido({ onClose, itensPedido, setItensPedido }) {
     const [unidades, setUnidades] = useState([]);
@@ -171,7 +170,6 @@ function ModalPedido({ onClose, itensPedido, setItensPedido }) {
 
     return (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center">
-            {loading && <Loading />}
             <div className="bg-gray-900 p-8 rounded-lg w-full max-w-6xl text-slate-300">
                 <h2 className="text-3xl mb-4">Adicionar Item ao Pedido</h2>
                 <form>
