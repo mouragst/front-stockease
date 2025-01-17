@@ -1,9 +1,8 @@
 // Sidebar.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { AiOutlineDashboard } from "react-icons/ai";
-import { GoGear } from "react-icons/go";
-import { TbReportAnalytics } from "react-icons/tb";
 import { FaUserCog, FaRegMoneyBillAlt } from "react-icons/fa";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { BsBoxSeam } from "react-icons/bs";
@@ -61,7 +60,23 @@ const Sidebar = ({ children }) => {
                 Cadastro
                 {openCadastro ? <IoIosArrowDown className="ml-auto" /> : <IoIosArrowForward className="ml-auto" />}
               </div>
-              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openCadastro ? 'max-h-40' : 'max-h-0'}`}>
+              <ul className={`pl-6 overflow-hidden transition-max-height duration-300 ${openCadastro ? 'max-h-64' : 'max-h-0'}`}>
+              <li>
+                  <Link
+                    to="/cadastro/usuario"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
+                  >
+                    Cadastro de usuario
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/cadastro/funcionario"
+                    className="flex items-center py-2 px-4 text-gray-400 hover:bg-gray-900 rounded-lg transition-all duration-200 mx-5"
+                  >
+                    Cadastro de funcionario
+                  </Link>
+                </li>
                 <li>
                   <Link
                     to="/cadastro/fornecedor"
@@ -236,6 +251,10 @@ const Sidebar = ({ children }) => {
       </div>
     </div>
   );
+};
+
+Sidebar.propTypes = {
+  children: PropTypes.node,
 };
 
 export default Sidebar;

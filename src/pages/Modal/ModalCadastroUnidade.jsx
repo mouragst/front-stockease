@@ -1,5 +1,6 @@
 // ModalCadastroUnidade.js
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 import { apiUrl } from '../../config';
@@ -169,5 +170,19 @@ function ModalCadastroUnidade({ onClose, unidade }) {
         </div>
     );
 }
+ModalCadastroUnidade.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    unidade: PropTypes.shape({
+        razaoSocial: PropTypes.string,
+        cnpj: PropTypes.string,
+        inscricaoMunicipal: PropTypes.string,
+        inscricaoEstadual: PropTypes.string,
+        matriz: PropTypes.string,
+        cep: PropTypes.string,
+        endereco: PropTypes.string,
+        cidade: PropTypes.string,
+        uf: PropTypes.string,
+    }),
+};
 
 export default ModalCadastroUnidade;

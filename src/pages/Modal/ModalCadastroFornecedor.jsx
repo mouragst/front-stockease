@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import { apiUrl } from '../../config';
+import InputMask from 'react-input-mask';
 
 function ModalCadastroFornecedor({ onClose, fornecedor }) {
     const [codigo, setCodigo] = useState('');
@@ -56,6 +57,7 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
             cidade,
             cep,
             uf,
+            ativo : 1,
             telefone,
             email,
             contato,
@@ -97,6 +99,8 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
     };
 
     const consultaCnpj = async () => {
+        setCnpj(cnpj.replace(/[^\d]+/g, ''));
+        console.log(cnpj);
         if (cnpj.length !== 14) { return }
         try {
             // API COM USO LIMITADO DE 5 REQUISIÇÕES POR MINUTO, COMO É PARA PORTFÓLIO, JÁ ESTÁ EXCELENTE
@@ -109,6 +113,7 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
     };
 
     const consultaCep = async () => {
+        setCep(cep.replace('-', ''));
         if (cep.length !== 8) { return }
         try {
             // Consulta o CEP na API ViaCEP
@@ -148,14 +153,42 @@ function ModalCadastroFornecedor({ onClose, fornecedor }) {
                 </h2>
 
                 <div className="grid grid-cols-2 gap-6 mb-6">
-                    <Input label="CNPJ/CPF" value={cnpj} onBlur={consultaCnpj} onChange={(e) => setCnpj(e.target.value)} placeholder="Digite o CNPJ ou CPF" />
+                    <InputMask
+                        mask="99.999.999/9999-99"
+                        value={cnpj}
+                        onBlur={consultaCnpj}
+                        onChange={(e) => setCnpj(e.target.value)}
+                        >
+                        {(inputProps) => <Input {...inputProps} label="CNPJ/CPF" placeholder="Digite o CNPJ ou CPF" />}
+                    </InputMask>
                     <Input label="Razão Social" value={razaoSocial} placeholder="Digite a razão social" disabled/>
 
-                    <Input label="Inscrição Municipal" value={inscricaoMunicipal} onChange={(e) => setInscricaoMunicipal(e.target.value)} placeholder="Digite a inscrição municipal" />
-                    <Input label="Inscrição Estadual" value={inscricaoEstadual} onChange={(e) => setInscricaoEstadual(e.target.value)} placeholder="Digite a inscrição estadual" />
+                    <InputMask
+                        mask="99999999999999"
+                        value={inscricaoMunicipal}
+                        onChange={(e) => setInscricaoMunicipal(e.target.value)}
+                        >
+                        {(inputProps) => <Input {...inputProps} label="Inscrição Municipal" placeholder="Digite a inscrição municipal" />}
+                    </InputMask>
+
+
+                    <InputMask
+                        mask="999999999"
+                        value={inscricaoEstadual}
+                        onChange={(e) => setInscricaoEstadual(e.target.value)}
+                        >
+                        {(inputProps) => <Input {...inputProps} label="Inscrição Estadual" placeholder="Digite a inscrição estadual" />}
+                    </InputMask>
 
                     <div className="grid grid-cols-3 gap-4">
-                        <Input label="CEP" value={cep} onBlur={consultaCep} onChange={(e) => setCep(e.target.value)} placeholder="Digite o CEP" />
+                        <InputMask
+                            mask="99999-999"
+                            value={cep}
+                            onBlur={consultaCep}
+                            onChange={(e) => setCep(e.target.value)}
+                            >
+                            {(inputProps) => <Input {...inputProps} label="CEP" placeholder="Digite o CEP" />}
+                        </InputMask>
                         <Input label="UF" value={uf} onChange={(e) => setUf(e.target.value)} disabled placeholder="Digite o UF" />
                         <Input label="NumeroLogradouro" value={numeroLogradouro} onChange={(e) => setNumeroLogradouro(e.target.value)} placeholder="Digite o numero do logradouro" />
                     </div>

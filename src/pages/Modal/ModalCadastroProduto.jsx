@@ -4,6 +4,8 @@ import Input from '../../components/Input';
 import Textarea from '../../components/Textarea';
 import { apiUrl } from '../../config';
 
+import PropTypes from 'prop-types';
+
 function ModalCadastroProduto({ onClose, produto }) {
     const [codigoSku, setCodigoSku] = useState('');
     const [precoCompra, setPrecoCompra] = useState('');
@@ -13,6 +15,7 @@ function ModalCadastroProduto({ onClose, produto }) {
     const [cnpj, setCnpj] = useState('');
     const [descricao, setDescricao] = useState('');
     const [loading, setLoading] = useState(false);
+    // eslint-disable-next-line no-unused-vars
     const [loadingFornecedor, setLoadingFornecedor] = useState(false);
     const [debounceTimer, setDebounceTimer] = useState(null);
 
@@ -53,7 +56,7 @@ function ModalCadastroProduto({ onClose, produto }) {
                 clearTimeout(debounceTimer);
             }
         };
-    }, [cnpj]);
+    }, [cnpj, debounceTimer]);
     
     const handleSave = async () => {
         const produtoData = {
@@ -168,5 +171,10 @@ function ModalCadastroProduto({ onClose, produto }) {
         </div>
     );
 }
+
+ModalCadastroProduto.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    produto: PropTypes.object
+};
 
 export default ModalCadastroProduto;

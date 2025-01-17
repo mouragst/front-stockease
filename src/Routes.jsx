@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard/Dashboard';
 import CadastroFornecedor from './pages/Cadastro/CadastroFornecedor';
 import CadastroProduto from './pages/Cadastro/CadastroProduto';
 import CadastroUnidade from './pages/Cadastro/CadastroUnidade';
+import CadastroUsuario from './pages/Cadastro/CadastroUsuario';
+import CadastroFuncionario from './pages/Cadastro/CadastroFuncionario';
 
 // ROTAS DE COMPRAS
 import OrdemServico from './pages/Compras/OrdemServico';
@@ -42,6 +44,8 @@ function AppRoutes() {
                 <Route path='/cadastro/fornecedor' element={<CadastroFornecedor />} />
                 <Route path='/cadastro/produto' element={<CadastroProduto />} />
                 <Route path='/cadastro/unidades' element={<CadastroUnidade />} />
+                <Route path='/cadastro/usuario' element={<CadastroUsuario />} />
+                <Route path='/cadastro/funcionario' element={<CadastroFuncionario />} />
 
                 {/** ROTAS DE COMPRAS */}
                 <Route path='/compras/itens' element={<PedidoCompra />} />
